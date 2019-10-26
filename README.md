@@ -4,7 +4,7 @@
 
 > APRS is a protocol for widely spreading messages over an ad-hoc radio network while avoiding redundancy and network congestion.
 
-# F# for APRS
+# Chickadee (F# for APRS)
 
 A system for sending APRS messages built in F#, because functional programming and static typing make everything better.
 
