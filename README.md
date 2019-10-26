@@ -178,6 +178,7 @@ Contributors welcome. Please follow the [F# Style Guide](https://docs.microsoft.
 Or
 
 There is a `DOCKERFILE` if you are so inclined.
+> The Dockerfile has not been tested lately and may not work so good. MMD 10/26/2019 
 
 Run service:  `dotnet run -p src/faprs.service` or `dotnet watch -p src/faprs.service/ run`
 
