@@ -1,6 +1,6 @@
 ![alt text][logo]
 
-[logo]: https://raw.githubusercontent.com/MarneeDear/FAPRS/master/changeme.png "Chickadee"
+[logo]: https://raw.githubusercontent.com/MarneeDear/chickadee/master/logo.png "Chickadee"
 
 > APRS is a protocol for widely spreading messages over an ad-hoc radio network while avoiding redundancy and network congestion.
 
