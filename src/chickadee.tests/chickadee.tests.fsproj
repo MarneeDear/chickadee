@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ParticipantStatusRepositoryTests.fs" />
+    <Compile Include="ParticipantStatusTests.fs" />
+    <Compile Include="CRCTests.fs" />
+    <Compile Include="AX25Tests.fs" />
+    <Compile Include="TNC2MONActivePatternsTests.fs" />
+    <Compile Include="TNC2MONRepositoryTests.fs" />
+    <Compile Include="APRSDataTests.fs" />
+    <Compile Include="CommonTests.fs" />
+    <Compile Include="TNC2FormatTests.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Expecto" Version="8.10.0" />
+    <PackageReference Include="Expecto.FsCheck" Version="8.8.0" />
+    <PackageReference Include="Expecto.TestResults" Version="8.8.0" />
+    <PackageReference Include="FsCheck" Version="2.13.0" />
+    <PackageReference Include="FSharp.Core" Version="4.*" />
+    <PackageReference Include="YoloDev.Expecto.TestSdk" Version="0.*" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.*" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\chickadee.core\chickadee.core.fsproj" />
+    <ProjectReference Include="..\chickadee.crc\chickadee.crc.fsproj" />
+    <ProjectReference Include="..\chickadee.infrastructure\chickadee.infrastructure.fsproj" />
+    <ProjectReference Include="..\chickadee.migrations\chickadee.migrations.fsproj" />
+  </ItemGroup>
+</Project>

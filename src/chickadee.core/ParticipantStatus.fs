@@ -1,0 +1,160 @@
+﻿namespace chickadee.core
+
+(*
+5 APRS DATA IN THE AX.25 INFORMATION FIELD
+
+Generic Data Format
+
+In general, the AX.25 Information field can contain some or all of the
+following information:
+• APRS Data Type Identifier
+• APRS Data
+• APRS Data Extension
+• Comment
+
+Generic APRS Information Field
+        DataTypeID  APRSData    APRSDataExtension   Comment
+Bytes:  1           n           7                   n
+
+The AX.25 information field size is defined as 1-256 bytes
+
+APRS Data Type Identifier
+Every APRS packet contains an APRS Data Type Identifier (DTI). This
+determines the format of the remainder of the data in the Information field
+
+Participant Status 
+* User-defined data type
+* 253 chars max (to accomodate the user defined message identifiers
+* Participant #
+* Time last seen at comm station
+* Status (Continued, injured, waiting for help, taking a break) -- this will need status codes
+    * description
+* Sender identifies the comm staion Or include GPS to identify the way point
+* Destination identifies the HQ??
+
+Participant Status Field
+        TIMESTAMP   PARTICIPANT-ID      STATUS-1    STATUS-2    MESSAGE
+BYTES   8-fixed     5-fixed             1-fixed     1-fixed     0-238 
+
+NOT USING THIS PROBABLY Date/Time format 2009-06-15T13:45:30 -- yyyy-MM-ddTHH:mm:ss
+
+TIMESTAMP
+Month/Day/Hours/Minutes (MDHM) format is a fixed 8-character field,
+consisting of the month (01–12) and day-of-the-month (01–31), followed by
+the time in hours and minutes zulu. For example:
+
+10092345 is 23 hours 45 minutes zulu on October 9th.
+
+If cycling through messages, participantStatus expires at midnight, 
+but can be renewed for the next day 
+
+Experimental User-Defined types start with {{ (double curly braces)
+
+The data in the AX.25 Information field consists of a three-character header:
+{ APRS Data Type Identifier.
+U A one-character User ID.
+X A one-character user-defined packet type.
+
+Position Reports will be identified like this:
+
+{{P
+
+Userdefined | experimental | P for position report
+
+Since the field is limited to 256 bytes total, the position report must be 256 - 3 = 253
+
+*)
+module Participant = 
+    open System
+
+    //TODO return failed state if not correct length 
+    type ParticipantID = private ParticipantID of string
+    module ParticipantID =
+        let create (nbr:string) =
+            match nbr with 
+            | n when String.IsNullOrWhiteSpace(n)   -> None
+            | n when nbr.Length < 6                 -> Some (ParticipantID (sprintf "%5s" n)) //Fixed width 5 chars
+            | _                                     -> None 
+        let value (ParticipantID n) = n
+
+    //10092345 is 23 hours 45 minutes zulu on October 9th.
+    type RecordedOn = private RecordedOn of string
+    module RecordedOn =
+        let revert (timestamp:string) = //TODO would this be better in an active pattern?
+            let mm = (timestamp.Substring(0, 2))
+            let dd = (timestamp.Substring(2, 2))
+            let HH = (timestamp.Substring(4, 2))
+            let MM = (timestamp.Substring(6, 2))
+            let dt = sprintf "%i-%s-%sT%s:%s" DateTime.Today.Year mm dd HH MM //TODO this will be a problem at the new year or when otherwise dealing with timestamps that cross over years
+            DateTime.Parse(dt)
+        let create (date:DateTime option) =
+            match date with
+            | Some d    -> RecordedOn (sprintf "%02i%02i%02i%02i" d.Month d.Day d.Hour d.Minute)
+            | None      -> let utcNow = DateTime.Now
+                           RecordedOn (sprintf "%02i%02i%02i%02i" utcNow.Month utcNow.Day utcNow.Hour utcNow.Minute)
+        let value (RecordedOn d) = d
+
+    type ParticipantStatusMessage = private ParticipantStatusMessage of string
+    module ParticipantStatusMessage =
+        let create (s:string) =
+            match (s.Trim()) with
+            | s when s.Length <= 238 -> ParticipantStatusMessage s
+            | _ -> ParticipantStatusMessage (s.Substring(0, 238))
+        let value (ParticipantStatusMessage s) = s
+
+    type ParticipantStatus =
+        | Continued                 of ParticipantStatusMessage
+        | Injured                   of ParticipantStatus
+        | Resting                   of ParticipantStatusMessage
+        | NeedsEmergencySupport     of ParticipantStatusMessage
+        | Completed                 of ParticipantStatusMessage
+        | DroppedOut                of ParticipantStatusMessage
+        | Unknown                   of ParticipantStatusMessage
+        member this.ToStatusCombination() =
+            match this with
+            | Continued m       -> (1, 1, ParticipantStatusMessage.value m)
+            | Injured s         ->  match s with
+                                    | Continued m               -> (2, 1, ParticipantStatusMessage.value m)
+                                    | Resting m                 -> (2, 3, ParticipantStatusMessage.value m)
+                                    | NeedsEmergencySupport m   -> (2, 4, ParticipantStatusMessage.value m)
+                                    | DroppedOut m              -> (2, 6, ParticipantStatusMessage.value m)
+                                    | Unknown m                 -> (2, 0, ParticipantStatusMessage.value m) 
+                                    | _                         -> (2, 0, String.Empty)
+            | Resting m                 -> (3, 3, ParticipantStatusMessage.value m)
+            | NeedsEmergencySupport m   -> (4, 4, ParticipantStatusMessage.value m)
+            | Completed m               -> (5, 5, ParticipantStatusMessage.value m)
+            | DroppedOut m
+            | Unknown m                 -> (0, 0, ParticipantStatusMessage.value m)
+        member this.ToOptionName () =
+            match this with
+            | Continued s               -> "Continued"
+            | Injured s                 -> "Injured"
+            | Resting s                 -> "Resting"
+            | NeedsEmergencySupport s   -> "Needs Emergency Support"
+            | Completed s               -> "Completed"
+            | DroppedOut s              -> "Dropped Out"
+            | Unknown s                 -> "Unknown"
+        static member fromStatusCombo s =
+            match s with
+            | (1, 1, m) -> (Continued (ParticipantStatusMessage.create m))
+            | (2, 1, m) -> (Injured (Continued (ParticipantStatusMessage.create m)))
+            | (2, 3, m) -> (Injured (Resting (ParticipantStatusMessage.create m)))
+            | (2, 4, m) -> (Injured (NeedsEmergencySupport (ParticipantStatusMessage.create m)))
+            | (2, 0, m) -> (Injured (Unknown (ParticipantStatusMessage.create m)))
+            | (3, 3, m) -> (Resting (ParticipantStatusMessage.create m))
+            | (4, 4, m) -> (NeedsEmergencySupport (ParticipantStatusMessage.create m))
+            | (5, 5, m) -> (Completed (ParticipantStatusMessage.create m))
+            | (6, 6, m) -> (DroppedOut (ParticipantStatusMessage.create m))
+            | (0, 0, m) -> (Unknown (ParticipantStatusMessage.create m))
+            | (_, _, m) -> (Unknown (ParticipantStatusMessage.create m))
+
+    type ParticipantStatusReport =
+        {
+            TimeStamp           : RecordedOn
+            ParticipantID       : ParticipantID
+            ParticipantStatus   : ParticipantStatus
+            //Cancelled           : bool
+        }
+        override this.ToString() =
+            let (status1, status2, msg) = this.ParticipantStatus.ToStatusCombination()
+            sprintf "{{P%s%s%i%i%s" (RecordedOn.value this.TimeStamp) (ParticipantID.value this.ParticipantID) status1 status2 msg //(if this.Cancelled then "C" else String.Empty)

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Common.fs" />
+    <Compile Include="PositionReport.fs" />
+    <Compile Include="Message.fs" />
+    <Compile Include="ParticipantStatus.fs" />
+    <Compile Include="TNC2MONActivePatterns.fs" />
+    <Compile Include="DataFormatActivePatterns.fs" />
+    <Compile Include="TNC2MON.fs" />
+    <Compile Include="AX25.fs" />
+    <Compile Include="KISS.fs" />
+  </ItemGroup>
+  <ItemGroup>
+      <PackageReference Include="FSharp.Core" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\chickadee.crc\chickadee.crc.fsproj" />
+  </ItemGroup>
+</Project>
