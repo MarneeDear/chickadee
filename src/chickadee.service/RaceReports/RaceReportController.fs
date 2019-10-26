@@ -3,8 +3,8 @@
 open Saturn
 open FSharp.Control.Tasks.ContextInsensitive
 open Microsoft.AspNetCore.Http
-open faprs.core.Participant
-open faprs.infrastructure
+open chickadee.core.Participant
+open chickadee.infrastructure
 open ViewModels
 open System
 
