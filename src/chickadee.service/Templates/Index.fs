@@ -4,13 +4,16 @@ open Giraffe.GiraffeViewEngine
 
 let index =
     [
-        section [_class "hero is-light"] [
+        section [_class "hero"] [
             div [_class "hero-body"] [
                 div [_class "container"] [
                     div [_class "columns is-vcentered"] [
                         div [_class "column"] [
-                            p [_class "title"] [rawText "Welcome to FAPRS!"]
-                            p [_class "subtitle"] [rawText "F# for APRS. This is a work in progress."]
+                            p [_class "subtitle"] [img [_src "/logo-cropped.png";]
+                                                   rawText "F# for APRS. This is a work in progress."
+                                                    
+                            ]
+                            
                         ]
                     ]
                 ]
@@ -45,7 +48,7 @@ let index =
             div [_class "tile is-ancestor"] [
                 div [_class "tile is-parent is-4"] [
                     article [_class "tile is-child notification is-dark box"] [
-                        a [_class "title"; _href "https://github.com/MarneeDear/FAPRS"] [rawText "FAPRS Source"]
+                        a [_class "title"; _href "https://github.com/MarneeDear/chickadee"] [rawText "Chickadee Source"]
                     ]
                 ]
                 div [_class "tile is-parent is-4"] [
