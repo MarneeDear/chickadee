@@ -65,7 +65,7 @@ After cloning this repo you can restore the dependencies, run the migrations, ru
 ### Run the migrations
 
 ```bash
-dotnet run -p src/faprs.migrations
+dotnet run -p src/chickadee.migrations
 ```
 
 This should create two tables.
@@ -75,7 +75,7 @@ This should create two tables.
 From the root project folder (the folder that was created when you cloned this repo)
 
 ```bash
-dotnet run --project src/faprs.cli/ -- --help
+dotnet run --project src/chickadee.cli/ -- --help
 ```
 
 This will restore dependencies, compile the code, and run the CLI (please be patient).
@@ -108,7 +108,7 @@ OPTIONS:
 There are also sub-commands for the `position report`. You can get help for those too.
 
 ```bash
-dotnet run --project src/faprs.cli/ -- --rpt --help
+dotnet run --project src/chickadee.cli/ -- --rpt --help
 ```
 
 You should see some helpful stuff like this.
@@ -130,7 +130,7 @@ OPTIONS:
 #### Create a TNC2MON formatted frame with position report
 
 ```bash
-dotnet run --project src/faprs.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --rpt latitude 36.106964 longitude -112.112999 symbol b comment "Join Oro Valley Amateur Radio Club"
+dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --rpt latitude 36.106964 longitude -112.112999 symbol b comment "Join Oro Valley Amateur Radio Club"
 ```
 
 This will create a TNC2MON formatted frame with a lat/lon position report that looks like this:
@@ -154,7 +154,7 @@ Let's break this down:
 #### Create a TNC2MON formatted frame with unformatted message (string)
 
 ```bash
-dotnet run --project src/faprs.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --msg "Join Oro Valley Amateur Radio Club"
+dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --msg "Join Oro Valley Amateur Radio Club"
 
 ```
 
@@ -180,12 +180,12 @@ Or
 There is a `DOCKERFILE` if you are so inclined.
 > The Dockerfile has not been tested lately and may not work so good. MMD 10/26/2019 
 
-Run service:  `dotnet run -p src/faprs.service` or `dotnet watch -p src/faprs.service/ run`
+Run service:  `dotnet run -p src/chickadee.service` or `dotnet watch -p src/chickadee.service/ run`
 
 ### Run the tests
 
 ```bash
-dotnet run -p src/faprs.tests -f netcoreapp2.2
+dotnet run -p src/chickadee.tests -f netcoreapp2.2
 ```
 
 This will restore dependencies, compile all projects, and run tests.
@@ -193,19 +193,58 @@ This will restore dependencies, compile all projects, and run tests.
 #### Run the tests while changing code (dotnet watch)
 
 ```bash
-dotnet watch -p src/faprs.tests run -f netcoreapp2.2
+dotnet watch -p src/chickadee.tests run -f netcoreapp2.2
 ```
 
 The tests will re-run every time you save changes, including adding more tests.
 
-## Deploy to a Raspberry PI
+## Publish and deploy to a Raspberry PI
 
-TBD
+> This assumes some familiarity with Linux and Raspberry Pi.
+
+To create a package that you can copy to and run on a Raspberry Pi, you first need to publish a `self-contained` package specifying the `linux-arm` runtime identifier.
+
+Find out more about publishing and runtime identifiers [here](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).
+
+```bash
+dotnet publish -r linux-arm --self-contained -o ../../publish src/chickadee.cli
+```
+
+This will create a bunch of files in the `publish` directory, two folders up from the src directory `src/chickadee.cl`. You can change that path to suit your needs.
+
+Once that is done you can copy to your Raspberry Pi and setup a command reference in `usr/bin`. TODO
+
+1. Use `scp` or `rsync` to copy the publish directory and all of its contents to a location on the Raspberry Pi. It can be your home directory.
+
+#### Setup a command alias in two ways
+
+##### Use `bash aliases` to create a command alias that points to the location of the files you copied to the Pi.
+
+1. Use your favorite editor to open your .bashrc file (for example, `nano`)
+2. At the end of the file add a line that looks like this
+```text
+alias ckdee='<path to your published files>/chickadee.cli'
+```
+3. Save the file and go back to the command line
+4. On the command line, execute `bashrc`
+```bash
+. ~/.bashrc
+```
+3. On the command line, test that this worked
+```bash
+ckdee --help
+```
+
+This makes the `ckdee` command only available to you. To make it available to all users you will need to copy the published directory to `/usr/local/bin`.
+
+To make this less ambiguous, rename the `publish` directory to `aprs-chickadee`.
+
+1. Use `cp` to copy `aprs-chickadee` to `usr/local/bin`
+2. 
 
 ## Working with Dire Wolf and the `kissutil`
 
-Follow the Dire Wolf user guide to install Dire Wolf on your system. Follow the user guide 
-to configure and start Dire Wolf.
+Follow the Dire Wolf user guide to install Dire Wolf on your system. Follow the user guide to configure and start Dire Wolf.
 
 ### Start the `kissutil` specifying the read and write folder
 
@@ -215,14 +254,14 @@ kissutil -o REC -f XMIT
 
 `-o` specifies the folder to which Dire Wolf will write the received APRS messages.
 
-`-f` specifies the folder from which Dire Wolf will read the messages FAPRS will send.
+`-f` specifies the folder from which Dire Wolf will read the messages Chickadee will send.
 
-### User FAPRS to send a message through `kissutil`
+### Use Chickadee to send a message through `kissutil`
 
 Write a Position Report without Timestamp to the `XMIT` folder.
 
 ```bash
-dotnet run --project src/faprs.cli/ -- --save-to XMIT --sender KG7SIO --destination APDW15 --path WIDE1-1 --msg "Join Oro Valley Amateur Radio Club"
+dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO --destination APDW15 --path WIDE1-1 --msg "Join Oro Valley Amateur Radio Club"
 ```
 
 ## DireWolf tips
@@ -235,7 +274,7 @@ direwolf -d n
 
 ### Running DireWolf with RTL-SDR devices
 
-For testing I setup my Baofeng connected to my desktop PC, running DireWolf and FAPRS, and a Nooelc RTL-SDR connected to a Raspberry Pi 3 running DireWolf, RTL-FM, and FAPRS. The RTL-SDR software seems only work on Linux.
+For testing I setup my Baofeng connected to my desktop PC, running DireWolf and Chickadee, and a Nooelc RTL-SDR connected to a Raspberry Pi 3 running DireWolf, RTL-FM, and Chickadee. The RTL-SDR software seems only work on Linux.
 
 DireWolf provides documentation about use SDR in the guide `Raspberry-Pi-SDR-IGate.pdf` (look in the reference-materials of this repo), but I will summarize what I do, here. The guide describes how and what to install to get it to work.
 
@@ -255,7 +294,7 @@ real sample rate: 2048124 current PPM: 61 cumulative PPM: 63
 real sample rate: 2048129 current PPM: 63 cumulative PPM: 63
 ```
 
-Run direwolf with the PPM calibration value. The flag is `-p`
+Run `direwolf` with the PPM calibration value. The flag is `-p`
 
 ```bash
 rtl_fm -p 63 -f 144.39M - | direwolf -d n -c sdr.conf -r 24000 -D 1 - 
@@ -263,18 +302,18 @@ rtl_fm -p 63 -f 144.39M - | direwolf -d n -c sdr.conf -r 24000 -D 1 -
 
 ## Run the web project
 
-`faprs.service` provides a web interface to enter messages you want to send over APRS and to see messages received over APRS.
+`chickadee.service` provides a web interface to enter messages you want to send over APRS and to see messages received over APRS.
 
 You can run it with `dotnet run` and `dotnet watch`.
 
 ### Run with re-loading after changes.
 
 ```bash
-dotnet watch -p src/faprs.service/ run
+dotnet watch -p src/chickadee.service/ run
 ```
 
 ### Run once
 
 ```bash
-dotnet run -p src/faprs.service/
+dotnet run -p src/chickadee.service/
 ```
