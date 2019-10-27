@@ -10,7 +10,7 @@ open SimpleMigrations.Console
 [<EntryPoint>]
 let main argv =
 
-    //LOAD faprs.migration and use the simple migrations console runner to create a new test database or migrate an existing one
+    //LOAD chickadee.migration and use the simple migrations console runner to create a new test database or migrate an existing one
     let mutable database_location : string = "DataSource=database.sqlite"
     if argv.Length > 0 then
         database_location <- argv.[0]
