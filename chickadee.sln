@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D22495EB-8649-47C6-9F0F-C077DAF3484C}"
 EndProject
@@ -18,14 +18,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{1E2F5BB5-6345-49EF-93B0-6B1436B5C797}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		build.fsx = build.fsx
 		Dockerfile = Dockerfile
+		fake.cmd = fake.cmd
+		fake.sh = fake.sh
 		global.json = global.json
+		paket.dependencies = paket.dependencies
+		paket.dependenciesxx = paket.dependenciesxx
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "chickadee.crc", "src\chickadee.crc\chickadee.crc.fsproj", "{015623EE-CBA3-499E-AF45-C3FF8772FFDE}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "chickadee.migrations", "src\chickadee.migrations\chickadee.migrations.fsproj", "{C6008DBF-B8E1-4D3D-9781-F9094F9ED734}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "chickadee.migrations", "src\chickadee.migrations\chickadee.migrations.fsproj", "{C6008DBF-B8E1-4D3D-9781-F9094F9ED734}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

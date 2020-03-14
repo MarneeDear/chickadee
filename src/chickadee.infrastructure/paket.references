@@ -1,0 +1,5 @@
+﻿FSharp.Core
+Dapper
+Microsoft.Data.Sqlite
+Simple.Migrations
+TaskBuilder.fs

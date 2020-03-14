@@ -1,0 +1,4 @@
+﻿FSharp.Core
+Microsoft.Data.Sqlite
+Simple.Migrations
+TaskBuilder.fs

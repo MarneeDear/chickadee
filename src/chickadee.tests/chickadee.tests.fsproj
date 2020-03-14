@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
@@ -15,6 +16,9 @@
     <Compile Include="CommonTests.fs" />
     <Compile Include="TNC2FormatTests.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Expecto" Version="8.10.0" />
@@ -32,4 +36,5 @@
     <ProjectReference Include="..\chickadee.infrastructure\chickadee.infrastructure.fsproj" />
     <ProjectReference Include="..\chickadee.migrations\chickadee.migrations.fsproj" />
   </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

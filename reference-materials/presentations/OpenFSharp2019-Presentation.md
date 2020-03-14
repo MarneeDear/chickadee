@@ -97,7 +97,7 @@ The most interesting one is `user-defined` data formats. APRS provides a way to 
 
 There are many APRS clients and applications out there. Some of them are very feature rich, and work well.
 
-But I am a software engineer so I want to be able to extend the client and possibly add support for my own User-Defined. The existing software fall into the category of a few problems:
+But I am a software engineer so I want to be able to extend the client and possibly add support for my own User-Defined data formats. The existing software fall into the categories of a few problems:
 
 * Not extensible
 * Not written in a language I know
