@@ -26,7 +26,7 @@ TODO draw a diagram
 
 #### Requirements
 
-* .NET Core SDK 2.2 and above
+* .NET Core SDK 3.1 and above
 * [Dire Wolf v1.5](https://github.com/wb2osz/direwolf/releases/tag/1.5)
 * SQLite3
 
@@ -34,7 +34,7 @@ TODO draw a diagram
 
 See the project files, but here are the highlights.
 
-* .NET Core SDK v2.2 and above 
+* .NET Core SDK v3.1 and above 
 * [Argu](https://github.com/fsprojects/Argu) for the CLI
 * [Expecto](https://github.com/haf/expecto) for unit tests
 
@@ -185,7 +185,7 @@ Run service:  `dotnet run -p src/chickadee.service` or `dotnet watch -p src/chic
 ### Run the tests
 
 ```bash
-dotnet run -p src/chickadee.tests -f netcoreapp2.2
+dotnet run -p src/chickadee.tests -f netcoreapp3.1
 ```
 
 This will restore dependencies, compile all projects, and run tests.
@@ -193,7 +193,7 @@ This will restore dependencies, compile all projects, and run tests.
 #### Run the tests while changing code (dotnet watch)
 
 ```bash
-dotnet watch -p src/chickadee.tests run -f netcoreapp2.2
+dotnet watch -p src/chickadee.tests run -f netcoreapp3.1
 ```
 
 The tests will re-run every time you save changes, including adding more tests.

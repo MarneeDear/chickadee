@@ -82,8 +82,8 @@ module TNC2MONRepository =
         | Some _, Some _, None -> Error "Message Number part of message not in expected format."
         | _, _, _              -> Error "Message not in expected format."
 
-    //let mapUnsupportedMessage (msg:string) =
-    //    Unsupported (UnformattedMessage.create msg)
+    let mapUnsupportedMessage (msg:string) =
+        TNC2MON.Information.Unsupported msg //(UnformattedMessage.create msg)
 
     //18 USER-DEFINED DATA FORMAT --experimental designator
     //APRS 1.01 For experimentation, or prior to being issued a User ID, anyone may utilize
@@ -178,7 +178,7 @@ module TNC2MONRepository =
                                         //match pRpt with
                                         //| Some r -> Ok r
                                         //| None -> Error "Participant report not in expected format"
-            //| _                      -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
+            | _                      -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
 
         frame record
         |> Result.bind msg
