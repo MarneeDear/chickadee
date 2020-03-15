@@ -23,18 +23,10 @@ nuget Expecto
 nuget Expecto.TestResults
 nuget Expecto.FsCheck
 
-//Build
+// [ FAKE GROUP ]
 group Build
-  source https://api.nuget.org/v3/index.json
-  framework: netstandard2.0
-
-  //nuget FAKE
-  nuget FSharp.Core = 4.5.0 // https://github.com/fsharp/FAKE/issues/2001
-  nuget Fake.Core.Target
-  nuget Fake.DotNet.Cli
-  nuget Fake.IO.FileSystem
-  nuget Fake.Core.Environment
-  nuget Fake.Core.Trace
-  nuget Fake.IO.Zip
-
-  nuget NuGet.CommandLine
+    storage none
+    source https://api.nuget.org/v3/index.json
+    nuget Fake.DotNet.Cli
+    nuget Fake.IO.FileSystem
+    nuget Fake.Core.Target

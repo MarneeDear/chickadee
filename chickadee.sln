@@ -18,6 +18,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{1E2F5BB5-6345-49EF-93B0-6B1436B5C797}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		build-art.txt = build-art.txt
 		build.fsx = build.fsx
 		Dockerfile = Dockerfile
 		fake.cmd = fake.cmd
