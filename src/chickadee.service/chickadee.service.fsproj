@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="web.config" />
     <Content Include="favicon.ico" />
     <Content Include="static\logo-cropped.png" />
     <Content Include="static\logo.png" />
@@ -13,6 +14,9 @@
     <Compile Include="Templates\Index.fs" />
     <Compile Include="Templates\InternalError.fs" />
     <Compile Include="Templates\NotFound.fs" />
+    <Compile Include="All\AllModels.fs" />
+    <Compile Include="All\AllViews.fs" />
+    <Compile Include="All\AllController.fs" />
     <Compile Include="WeatherReports\WeatherReportModels.fs" />
     <Compile Include="WeatherReports\WeatherReportViews.fs" />
     <Compile Include="WeatherReports\WeatherReportController.fs" />

@@ -44,6 +44,16 @@ let index =
             ]            
         ]
         section [_class "section"] [
+            div [_class "tile is-ancestor"] [
+                div [_class "tile is-parent is-3"] [
+                    article [_class "tile is-child notification is-warning box"] [
+                        a [_class "title"; _href "/all"] [encodedText "All Received Messages"]
+                    ]
+                ]
+            ]            
+        ]
+
+        section [_class "section"] [
             h1 [_class "title"] [rawText "Resources"]
             div [_class "tile is-ancestor"] [
                 div [_class "tile is-parent is-4"] [

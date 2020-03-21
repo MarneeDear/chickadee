@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <None Include="paket.references" />
@@ -15,10 +15,6 @@
     <ProjectReference Include="..\chickadee.core\chickadee.core.fsproj" />
   </ItemGroup>
   <ItemGroup>
-    <!--<PackageReference Include="Dapper" Version="1.60.6" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.3" />
-    <PackageReference Include="Simple.Migrations" Version="0.9.19" />
-    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />-->
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

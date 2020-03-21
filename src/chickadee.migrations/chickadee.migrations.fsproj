@@ -9,10 +9,6 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <!--<PackageReference Include="FSharp.Core" Version="4.*" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.4" />
-    <PackageReference Include="Simple.Migrations" Version="0.9.19" />
-    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />-->
     <None Include="paket.references" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

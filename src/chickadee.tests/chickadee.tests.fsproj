@@ -21,14 +21,6 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Expecto" Version="8.10.0" />
-    <PackageReference Include="Expecto.FsCheck" Version="8.8.0" />
-    <PackageReference Include="Expecto.TestResults" Version="8.8.0" />
-    <PackageReference Include="FsCheck" Version="2.13.0" />
-    <PackageReference Include="FSharp.Core" Version="4.*" />
-    <PackageReference Include="YoloDev.Expecto.TestSdk" Version="0.*" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.*" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\chickadee.core\chickadee.core.fsproj" />

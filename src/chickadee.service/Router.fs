@@ -39,6 +39,9 @@ let browserRouter = router {
 
     //WEATHER REPORTS
     forward "/weather_reports" WeatherReport.Controller.resource
+
+    //All received messages
+    forward "/all" All.Controller.resource
 }
 
 //Other scopes may use different pipelines and error handlers
