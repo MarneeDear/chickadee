@@ -10,7 +10,9 @@ open Fake.Core.TargetOperators
 Target.initEnvironment ()
 
 let servicePath = "./src/chickadee.service/" |> Fake.IO.Path.getFullName
+let webPath = "./src/chickadee.web/" |> Fake.IO.Path.getFullName
 let testPath = "./src/chickadee.tests/" |> Fake.IO.Path.getFullName
+let migrationPath = "./src/chickadee.migrations/" |> Fake.IO.Path.getFullName
 
 let runDotNet cmd workingDir =
     let result =
@@ -37,13 +39,14 @@ Target.create "Clean" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
-    !! "src/**/*.*proj"
-    |> Seq.iter (DotNet.build id)
+    //!! "src/**/*.*proj"
+    //|> Seq.iter (runDotNet "build") //(DotNet.build id)
+    runDotNet "build" ("." |> Fake.IO.Path.getFullName)
 )
 
-Target.create "Run" (fun _ -> 
+Target.create "RunWeb" (fun _ -> 
   let server = async {
-    runDotNet "watch run" servicePath |> ignore
+    runDotNet "watch run" webPath |> ignore
     }
 
   let browser = async {
@@ -57,6 +60,11 @@ Target.create "Run" (fun _ ->
   |> ignore
 )
 
+Target.create "RunService" (fun _ -> 
+    runDotNet "watch run" servicePath |> ignore
+)
+
+
 open Fake.IO.Globbing.Operators
 open System.Net
 
@@ -64,6 +72,12 @@ Target.create "Test" (fun _ ->
     //DotNet.test (fun p -> p) infrastructureTestsPath
     runDotNet "run" testPath |> ignore
 )
+
+Target.create "MigrateUp" (fun _ -> 
+    //DotNet.test (fun p -> p) infrastructureTestsPath
+    runDotNet "run" migrationPath |> ignore
+)
+
 
 Target.create "All" ignore
 
@@ -74,6 +88,10 @@ Target.create "All" ignore
 
 "Clean"
     ==> "Build"
-    ==> "Run"
+    ==> "RunWeb"
+
+"Clean"
+    ==> "Build"
+    ==> "RunService"
 
 Target.runOrDefault "All"
