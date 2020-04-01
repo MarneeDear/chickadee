@@ -15,6 +15,7 @@ nuget TaskBuilder.fs
 nuget System.Configuration.ConfigurationManager
 nuget Dapper
 nuget Argu
+nuget Microsoft.Extensions.Hosting
 
 //TEST
 nuget Microsoft.NET.Test.Sdk
@@ -23,6 +24,9 @@ nuget FsCheck
 nuget Expecto
 nuget Expecto.TestResults
 nuget Expecto.FsCheck
+
+//SERVICE
+nuget Microsoft.Extensions.Hosting
 
 // [ FAKE GROUP ]
 group Build
