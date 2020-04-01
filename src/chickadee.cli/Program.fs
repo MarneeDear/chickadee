@@ -71,7 +71,7 @@ module Main =
     [<EntryPoint>]
     let main argv =
         let errorHandler = ProcessExiter(colorizer = function ErrorCode.HelpText -> None | _ -> Some ConsoleColor.Red)
-        let parser = ArgumentParser.Create<SourcePathArguments>(programName = "faprs", errorHandler = errorHandler)
+        let parser = ArgumentParser.Create<SourcePathArguments>(programName = "chick", errorHandler = errorHandler)
 
         try
             let results = parser.ParseCommandLine(inputs = argv, raiseOnUsage = true)
