@@ -7,7 +7,6 @@ open chickadee.core.DataFormats.PositionReportActivePatterns
 open chickadee.core.TNC2MonActivePatterns
 open chickadee.core.Participant
 
-
 //TODO Kiss settings
 (*
 Input, starting with a lower case letter is interpreted as being a command. 
@@ -163,41 +162,138 @@ module TNC2MONRepository =
             | Some f    -> f |> Ok
             | None      -> "Frame not in expected format." |> Error
         
-        let msg frame =
+        let information frame =
             match (|Information|_|) frame with
             | Some m    -> m |> Ok
-            | None      -> "No message part found." |> Error
+            | None      -> "No information part found." |> Error
+            
+            //| id when id.Equals("=") -> mapPositionReport info //(info.Substring 1) //We have a lat/lon position report without timestamot. Let's try to parse it.
+            //| id when id.Equals(":") -> mapMessage (info.Substring 1) //|> Ok //we have Message data type. Lets try to parse it
+            //| id when id.Equals("{") -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
+            //                            mapParticipantReport (info.Substring 1)
+            //                            //let pRpt = (mapParticipantReport (msg.Substring 1))
+            //                            //match pRpt with
+            //                            //| Some r -> Ok r
+            //                            //| None -> Error "Participant report not in expected format"
+            //| _                      -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
 
         let data (info:string) =
-            match info.Substring(0, 1) with
-            | id when id.Equals("=") -> mapPositionReport info //(info.Substring 1) //We have a lat/lon position report without timestamot. Let's try to parse it.
-            | id when id.Equals(":") -> mapMessage (info.Substring 1) //|> Ok //we have Message data type. Lets try to parse it
-            | id when id.Equals("{") -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
-                                        mapParticipantReport (info.Substring 1)
-                                        //let pRpt = (mapParticipantReport (msg.Substring 1))
-                                        //match pRpt with
-                                        //| Some r -> Ok r
-                                        //| None -> Error "Participant report not in expected format"
-            | _                      -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
+            match TNC2MON.getRawPaketType(info.Substring(0, 1)) with
+            | TNC2MON.RawInformation.Message -> mapMessage (info.Substring 1)
+            | TNC2MON.RawInformation.PositionReportWithoutTimeStampWithMessaging -> mapPositionReport info //We have a lat/lon position report without timestamot. Let's try to parse it.
+            | TNC2MON.RawInformation.UserDefined -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
+                                               mapParticipantReport (info.Substring 1)
+            | TNC2MON.RawInformation.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
 
         frame record
-        |> Result.bind msg
+        |> Result.bind information
         |> Result.bind data
-    
-    //All received frames are displayed in the usual monitor format, preceded with the channel number inside of [ ].
-    //[0] K1NRO-1>APDW14,WIDE2-2:!4238.80NS07105.63W#PHG5630
-    //See Dire Wolf User Guide 14.6 kissutil – KISS TNC troubleshooting and Application Interface
-    //TODO this needs to process each file not a specific file name -- we wont know file name at runtime
-    let processKissUtilFrames path (file: string option) =
-        let d = new DirectoryInfo(path);//Assuming Test is your Folder
-        let files = d.GetFiles()  //GetFiles("*.txt"); //Getting Text files
-        let getFrames fileName = 
-            File.ReadAllLines (Path.Combine(path, fileName))
-            |> Array.map (fun f -> convertRecordToAPRSData f)
-        match file with
-        | Some f    -> getFrames f
-        | None      -> files 
-                        |> Array.map (fun f -> f.Name)
-                        |> Array.map getFrames
-                        |> Array.head
+
+    let convertToPacket (record:string) =
+        let frame rcrd =
+            match (|Frame|_|) rcrd with
+            | Some f    -> f |> Ok
+            | None      -> "Frame not in expected format." |> Error
         
+        let information frame =
+            match (|Information|_|) frame with
+            | Some i    -> i |> Ok
+            | None      -> "No information part found." |> Error
+
+        let address frame =
+            match (|Address|_|) frame with
+            | Some a -> a |> Ok
+            | None -> "No address part found." |> Error
+
+        let destination addrs =
+            match (|Destination|_|) addrs with
+            | Some d -> d |> Ok
+            | None -> "No destination part found." |> Error
+
+        let sender addrs =
+            match (|Sender|_|) addrs with
+            | Some s -> s |> Ok
+            | None -> "No sender part found." |> Error
+
+        let path addrs =
+            match (|Path|_|) addrs with
+            | Some p -> p |> Ok
+            | None -> "No path found." |> Error
+
+        match frame record with
+        | Ok f -> 
+                  match (convertRecordToAPRSData record), (address f) with
+                  | Ok i, Ok a -> 
+                                  match (destination a), (sender a), (path a) with
+                                  | Ok d, Ok s, Ok p -> { 
+                                                          TNC2MON.Packet.Sender = if (CallSign.create s).IsSome then (CallSign.create s).Value else (CallSign.create System.String.Empty).Value
+                                                          TNC2MON.Packet.Destination = if (CallSign.create d).IsSome then (CallSign.create d).Value else (CallSign.create System.String.Empty).Value
+                                                          TNC2MON.Packet.Path = WIDEnN WIDE11 //TODO path is a list
+                                                          TNC2MON.Packet.Information = Some i
+                                                        } |> Ok
+                                  | Error m1, Error m2, Error m3 -> sprintf "Could not parse record [%s]. ERRORS [%s] [%s] [%s]" record m1 m2 m3 |> Error
+                                  | Error m1, Error m2, Ok p -> sprintf "Could not parse record [%s]. ERRORS [%s] [%s]" record m1 m2 |> Error
+                                  | Error m1, Ok s, Error m3 -> sprintf "Could not parse record [%s]. ERRORS [%s] [%s]" record m1 m3 |> Error
+                                  | Error m1, Ok s, Ok p -> sprintf "Could not parse record [%s]. ERROR [%s]" record m1 |> Error
+                                  | Ok d, Error m2, Ok p -> sprintf "Could not parse record [%s]. ERROR [%s]" record m2 |> Error
+                                  | Ok d, Error m2, Error m3 -> sprintf "Could not parse record [%s]. ERROR [%s] [%s]" record m2 m3 |> Error                                  
+                                  | Ok d, Ok s, Error m3 -> sprintf "Could not parse record [%s]. ERROR [%s]" record m3 |> Error
+                  | Error m1, Ok a -> sprintf "Could not parse record [%s]. ERROR [%s]" record m1 |> Error
+                  | Ok i, Error m2 -> sprintf "Could not parse record [%s]. ERROR [%s]" record m2 |> Error
+                  | Error m1, Error m2 -> sprintf "Could not parse record [%s]. ERROR [%s] [%s]" record m1 m2 |> Error
+        | Error m -> sprintf "Could not parse record [%s]. ERROR [%s]" record m |> Error
+        
+    
+    ////All received frames are displayed in the usual monitor format, preceded with the channel number inside of [ ].
+    ////[0] K1NRO-1>APDW14,WIDE2-2:!4238.80NS07105.63W#PHG5630
+    ////See Dire Wolf User Guide 14.6 kissutil – KISS TNC troubleshooting and Application Interface
+    ////TODO this needs to process each file not a specific file name -- we wont know file name at runtime
+    //let processKissUtilFrames path (file: string option) =
+    //    let d = new DirectoryInfo(path);//Assuming Test is your Folder
+    //    let files = d.GetFiles()  //GetFiles("*.txt"); //Getting Text files
+    //    let getFrames fileName = 
+    //        File.ReadAllLines (Path.Combine(path, fileName))
+    //        |> Array.map (fun f -> convertRecordToAPRSData f) //TODO Should convert to a packets
+    //    match file with
+    //    | Some f    -> getFrames f
+    //    | None      -> files 
+    //                    |> Array.map (fun f -> f.Name)
+    //                    |> Array.map getFrames
+    //                    |> Array.head
+
+    //let getRecords path (file: string option) =
+    //    let d = new DirectoryInfo(path);//Assuming Test is your Folder
+    //    let files = d.GetFiles()  //GetFiles("*.txt"); //Getting Text files
+    //    let getRecords fileName = 
+    //        File.ReadAllLines (Path.Combine(path, fileName))
+    //    match file with
+    //    | Some f -> getRecords f
+    //    | None   -> files |> Array.map (fun f -> f.Name) |> Array.map (fun f -> getRecords f) |> Array.head
+        
+    //let saveReveivedRawMessages connectionString path =
+    //    let rcrds = getRecords path None
+    //    let informationType frame =
+    //        match (|Information|_|) frame with
+    //        | Some i    -> TNC2MON.getRawPaketType(i.Substring(0, 1)).ToString()
+    //        | None      -> "No information part found."
+
+    //    let mapToRawFrameRecord error (frame:string)  =
+    //        {
+    //            raw_packet = frame
+    //            packet_type = informationType frame
+    //            error = error
+    //        }
+    //    let saveFrame rcrd = 
+    //        match (|Frame|_|) rcrd with
+    //        | Some f -> f |> (mapToRawFrameRecord String.Empty) |> (saveRawFrame connectionString)
+    //        | None   -> mapToRawFrameRecord rcrd "Record not in expected format." |> (saveRawFrame connectionString)
+ 
+    //    rcrds |> Array.map saveFrame
+    //    //|> Array.iter save
+
+    //    //let getRawType packet = 
+    //    //let packetsWithType (packet:Result<TNC2MON.Packet, string>) =
+    //    //    match packet with
+    //    //    | Ok p -> (p, p.Information.GetType().ToString())
+    //    //    | Error m -> "No type found."
+    //    //let results = packets |> Array.map(fun p -> p, (packetsWithType p))
