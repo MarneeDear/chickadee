@@ -7,7 +7,7 @@ let layout =
         head [] [
             meta [_charset "utf-8"]
             meta [_name "viewport"; _content "width=device-width, initial-scale=1" ]
-            title [] [encodedText "faprs.saturn - Error #404"]
+            title [] [encodedText "chick.saturn - Error #404"]
         ]
         body [] [
            h1 [] [rawText "ERROR #404"]

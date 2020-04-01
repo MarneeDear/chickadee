@@ -1,4 +1,2 @@
-﻿FSharp.Core
-Saturn
-Giraffe
-Microsoft.AspNetCore
+﻿Microsoft.Extensions.Hosting
+TaskBuilder.fs

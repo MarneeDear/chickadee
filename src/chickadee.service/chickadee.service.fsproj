@@ -1,53 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Include="web.config" />
-    <Content Include="favicon.ico" />
-    <Content Include="static\logo-cropped.png" />
-    <Content Include="static\logo.png" />
-    <Compile Include="Config.fs" />
-    <Compile Include="Templates\App.fs" />
-    <Compile Include="Templates\Index.fs" />
-    <Compile Include="Templates\InternalError.fs" />
-    <Compile Include="Templates\NotFound.fs" />
-    <Compile Include="All\AllModels.fs" />
-    <Compile Include="All\AllViews.fs" />
-    <Compile Include="All\AllController.fs" />
-    <Compile Include="WeatherReports\WeatherReportModels.fs" />
-    <Compile Include="WeatherReports\WeatherReportViews.fs" />
-    <Compile Include="WeatherReports\WeatherReportController.fs" />
-    <Compile Include="Messages\MessagesModels.fs" />
-    <Compile Include="Messages\MessagesViews.fs" />
-    <Compile Include="Messages\MessagesController.fs" />
-    <Compile Include="RaceReports\RaceReportModels.fs" />
-    <Compile Include="RaceReports\RaceReportViews.fs" />
-    <Compile Include="RaceReports\RaceReportController.fs" />
-    <Compile Include="PositionReport\PositionReportModels.fs" />
-    <Compile Include="PositionReport\PositionReportViews.fs" />
-    <Compile Include="PositionReport\PositionReportController.fs" />
-    <Compile Include="Router.fs" />
+    <Compile Include="Settings.fs" />
+    <Compile Include="Worker.fs" />
     <Compile Include="Program.fs" />
-    <None Include="paket.references" />
-    <None Include="static\app.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="static\app.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="static\bulma.min.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="static\favicon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="*.sqlite">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="paket.references" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\chickadee.core\chickadee.core.fsproj" />
     <ProjectReference Include="..\chickadee.infrastructure\chickadee.infrastructure.fsproj" />

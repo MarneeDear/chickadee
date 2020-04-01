@@ -1,27 +1,19 @@
-﻿module Server
+﻿// Learn more about F# at http://fsharp.org
+module chickadee.service.App
 
-open Saturn
-open Config
-
-let endpointPipe = pipeline {
-    plug head
-    plug requestId
-}
-
-let app = application {
-    pipe_through endpointPipe
-
-    error_handler (fun ex _ -> pipeline { render_html (InternalError.layout ex) })
-    use_router Router.appRouter
-    url "http://chickadee.local:8085/"
-    memory_cache
-    use_static "static"
-    use_gzip
-    use_config (fun _ -> {connectionString = "DataSource=database.sqlite"} ) //TODO: Set development time configuration
-}
+open System
+open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Hosting
 
 [<EntryPoint>]
-let main _ =
-    printfn "Working directory - %s" (System.IO.Directory.GetCurrentDirectory())
-    run app
+let main argv =
+    printfn "The Chickadee service is starting ... ."
+    let host =
+        Host.CreateDefaultBuilder(argv)
+            .ConfigureServices(fun hostContext services -> 
+                services.AddHostedService<chickadee.service.Workers.ReadWorker>() |> ignore
+                services.AddHostedService<chickadee.service.Workers.WriteWorker>() |> ignore
+            )
+            .Build().Run()
+    
     0 // return an integer exit code
