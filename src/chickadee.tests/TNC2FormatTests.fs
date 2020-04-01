@@ -56,3 +56,56 @@ let TNC2MONFormatTests =
             // Console.WriteLine packet
             Expect.equal packet TNC2_FINAL (sprintf "TNC2 formats didnt match")
     ]
+
+[<Tests>]
+let RawPacketTypeTests =
+    testList "Raw Packet Type Tests" [
+        testCase "Current MicE Data" <| fun _ ->
+            Expect.equal (getRawPaketType "\u1c") RawInformation.CurrentMicEData ""
+        testCase "Old MicE Data" <| fun _ ->
+            Expect.equal (getRawPaketType "\u1d") RawInformation.OldMicEData ""
+        testCase "Position Report Without TimeStamp Or Ultimeter" <| fun _ ->
+            Expect.equal (getRawPaketType "!") RawInformation.PositionReportWithoutTimeStampOrUltimeter ""
+        testCase "Peet Bros Weather Station #" <| fun _ ->
+            Expect.equal (getRawPaketType "#") RawInformation.PeetBrosWeatherStation ""
+        testCase "Raw GPS Data Or Ultimeter" <| fun _ ->
+            Expect.equal (getRawPaketType "$") RawInformation.RawGPSDataOrUltimeter "Raw GPS Data Or Ultimeter"
+        testCase "Argelo" <| fun _ ->
+            Expect.equal (getRawPaketType "%") RawInformation.Argelo "Argelo"
+        testCase "Old MicE But Current TMD700" <| fun _ ->
+            Expect.equal (getRawPaketType "'") RawInformation.OldMicEButCurrentTMD700 "Old MicE ButCurrent TMD700"
+        testCase "Item" <| fun _ ->
+            Expect.equal (getRawPaketType ")") RawInformation.Item "Item"
+        testCase "Peet Bros Weather Station *" <| fun _ ->
+            Expect.equal (getRawPaketType "*") RawInformation.PeetBrosWeatherStation "Peet Bros Weather Station"
+        testCase "Shelter Data With Time" <| fun _ ->
+            Expect.equal (getRawPaketType "+") RawInformation.ShelterDataWithTime "Shelter Data With Time"
+        testCase "Invalid Or Test" <| fun _ ->
+            Expect.equal (getRawPaketType ",") RawInformation.InvalidOrTest "Invalid Or Test"
+        testCase "Position Report With Timestamp No Messaging" <| fun _ ->
+            Expect.equal (getRawPaketType "/") RawInformation.PositionReportWithTimestampNoMessaging ""
+        testCase "Message" <| fun _ ->
+            Expect.equal (getRawPaketType ":") RawInformation.Message "Message"
+        testCase "Object" <| fun _ ->
+            Expect.equal (getRawPaketType ";") RawInformation.Object "Object"
+        testCase "Station Capabilities" <| fun _ ->
+            Expect.equal (getRawPaketType "<") RawInformation.StationCapabilities "Station Capabilities"
+        testCase "Position Report Without TimeStamp With Messaging" <| fun _ ->
+            Expect.equal (getRawPaketType "=") RawInformation.PositionReportWithoutTimeStampWithMessaging ""
+        testCase "Status Report" <| fun _ ->
+            Expect.equal (getRawPaketType ">") RawInformation.StatusReport "Status Report"
+        testCase "Query" <| fun _ ->
+            Expect.equal (getRawPaketType "?") RawInformation.Query "Query"
+        testCase "Position Report With Timestamp With Messaging" <| fun _ ->
+            Expect.equal (getRawPaketType "@") RawInformation.PositionReportWithTimestampWithMessaging ""
+        testCase "T is Telemetry Report" <| fun _ ->
+            Expect.equal (getRawPaketType "T") RawInformation.TelemetryReport "Should be Telemetry"
+        testCase "[ Maidenhead Grid Locator Beacon" <| fun _ ->
+            Expect.equal (getRawPaketType "[") RawInformation.MaidenheadGridLocatorBeacon "Should be Maidenhead Grid Locator Beacon"
+        testCase "" <| fun _ ->
+            Expect.equal (getRawPaketType "{") RawInformation.UserDefined "Should be UserDefined"
+        testCase "} is Third Party" <| fun _ ->
+            Expect.equal (getRawPaketType "}") RawInformation.ThirdPartyTraffic "Should be Third Party"
+        testCase "Unsupported character" <| fun _ ->
+            Expect.equal (getRawPaketType "N") RawInformation.Unsupported "Should be unsupported"
+    ]

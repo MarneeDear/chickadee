@@ -20,17 +20,21 @@ let main argv =
     let provider = SqliteDatabaseProvider(db)
     let migrator = SimpleMigrator(assembly, provider)
     let consoleRunner = ConsoleRunner(migrator)
-    consoleRunner.Run(Array.empty)
+    consoleRunner.Run(Array.empty) |> ignore
     //END migrate database
 
     //RUN TESTS
-    let writeResults = TestResults.writeNUnitSummary ("FaprsTestResults.xml", "Expecto.Tests")
+    let writeResults = TestResults.writeNUnitSummary ("ChickTestResults.xml", "Expecto.Tests")
     let config = defaultConfig.appendSummaryHandler writeResults
 
     //TNC2MONRepositoryTests.ProcessTNC2RecordTests
     //|> runTests config
 
-    runTestsInAssembly config argv
+    TNC2FormatTests.RawPacketTypeTests
+    |> runTests config
+
+    //runTestsInAssembly config argv
+
     //runTestsInAssembly defaultConfig argv
     //Console.ReadKey() |> ignore
     //0

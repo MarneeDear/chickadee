@@ -4,7 +4,6 @@ open Expecto
 open chickadee.core.Participant
 open System
 open chickadee.infrastructure
-open chickadee.core
 open chickadee.core.TNC2MON
 
 (*
@@ -16,13 +15,14 @@ the time in hours and minutes zulu. For example:
 
 [<Literal>]
 let GOOD_PARTICIPANT_CONTINUED_STATUS = "1234511We have a winner!"
-let TEST_DATE = Convert.ToDateTime("2019-01-01T00:00:00")
+let TEST_DATE = Convert.ToDateTime(sprintf "%i-01-01T00:00:00" DateTime.Now.Year)
 [<Literal>]
 let TEST_TIMESTAMP = "01010000"
 [<Literal>]
 let GOOD_PARTICIPANT_STATUS_MSG = "Runner has cut on leg. Not actively bleeding."
-[<Literal>]
-let TOO_LONG_STATUS_MSG = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu"
+//[<Literal>]
+let TOO_LONG_STATUS_MSG = new String('a', 239)
+//"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu"
 [<Literal>]
 let GOOD_PARTICIPANT_NBR = "12345"
 

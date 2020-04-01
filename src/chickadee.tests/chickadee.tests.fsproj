@@ -21,8 +21,6 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\chickadee.core\chickadee.core.fsproj" />
     <ProjectReference Include="..\chickadee.crc\chickadee.crc.fsproj" />
     <ProjectReference Include="..\chickadee.infrastructure\chickadee.infrastructure.fsproj" />
