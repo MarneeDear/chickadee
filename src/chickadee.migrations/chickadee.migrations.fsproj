@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="03_create_transmitted.fs" />
+    <Compile Include="02_create_received.fs" />
     <Compile Include="01_create_status_messages.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

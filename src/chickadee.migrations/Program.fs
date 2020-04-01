@@ -19,5 +19,5 @@ let main argv =
     let provider = SqliteDatabaseProvider(db)
     let migrator = SimpleMigrator(assembly, provider)
     let consoleRunner = ConsoleRunner(migrator)
-    consoleRunner.Run(Array.empty)
+    consoleRunner.Run(Array.empty) |> ignore
     0
