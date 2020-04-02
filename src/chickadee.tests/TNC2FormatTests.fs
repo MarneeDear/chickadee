@@ -61,19 +61,19 @@ let TNC2MONFormatTests =
 let RawPacketTypeTests =
     testList "Raw Packet Type Tests" [
         testCase "Current MicE Data" <| fun _ ->
-            Expect.equal (getRawPaketType "\u1c") RawInformation.CurrentMicEData ""
+            Expect.equal (getRawPaketType "\u1c") RawInformation.CurrentMicEData "Current MicE Data"
         testCase "Old MicE Data" <| fun _ ->
-            Expect.equal (getRawPaketType "\u1d") RawInformation.OldMicEData ""
+            Expect.equal (getRawPaketType "\u1d") RawInformation.OldMicEData "Old MicE Data"
         testCase "Position Report Without TimeStamp Or Ultimeter" <| fun _ ->
-            Expect.equal (getRawPaketType "!") RawInformation.PositionReportWithoutTimeStampOrUltimeter ""
+            Expect.equal (getRawPaketType "!") RawInformation.PositionReportWithoutTimeStampOrUltimeter "Position Report Without TimeStamp Or Ultimeter"
         testCase "Peet Bros Weather Station #" <| fun _ ->
-            Expect.equal (getRawPaketType "#") RawInformation.PeetBrosWeatherStation ""
+            Expect.equal (getRawPaketType "#") RawInformation.PeetBrosWeatherStation "Peet Bros Weather Station #"
         testCase "Raw GPS Data Or Ultimeter" <| fun _ ->
             Expect.equal (getRawPaketType "$") RawInformation.RawGPSDataOrUltimeter "Raw GPS Data Or Ultimeter"
         testCase "Argelo" <| fun _ ->
             Expect.equal (getRawPaketType "%") RawInformation.Argelo "Argelo"
         testCase "Old MicE But Current TMD700" <| fun _ ->
-            Expect.equal (getRawPaketType "'") RawInformation.OldMicEButCurrentTMD700 "Old MicE ButCurrent TMD700"
+            Expect.equal (getRawPaketType "'") RawInformation.OldMicEButCurrentTMD700 "Old MicE But Current TMD700"
         testCase "Item" <| fun _ ->
             Expect.equal (getRawPaketType ")") RawInformation.Item "Item"
         testCase "Peet Bros Weather Station *" <| fun _ ->

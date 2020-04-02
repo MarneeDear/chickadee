@@ -15,7 +15,6 @@ nuget TaskBuilder.fs
 nuget System.Configuration.ConfigurationManager
 nuget Dapper
 nuget Argu
-nuget Microsoft.Extensions.Hosting
 
 //TEST
 nuget Microsoft.NET.Test.Sdk

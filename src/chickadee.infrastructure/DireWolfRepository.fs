@@ -78,8 +78,11 @@ module KissUtil =
             | Some f -> getRecords f
             | None   -> files |> Array.map (fun f -> f.Name) |> Array.map (fun f -> getRecords f) |> Array.head
         
-    let saveReveivedRawMessages connectionString path =
-        let rcrds = getRecords path None
+    let saveReveivedRawMessages connectionString path (file: string option) =
+        let rcrds = 
+            match file with
+            | None -> getRecords path None
+            | Some f -> getRecords path (Some f)
 
         let mapToRawFrameRecord error (frame:string)  =
             {

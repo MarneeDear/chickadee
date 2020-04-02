@@ -1,2 +1,4 @@
 ﻿Microsoft.Extensions.Hosting
 TaskBuilder.fs
+Microsoft.AspNetCore.Hosting
+Microsoft.AspNetCore

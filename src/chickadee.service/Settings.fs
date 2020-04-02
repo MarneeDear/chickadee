@@ -9,4 +9,5 @@ module Settings =
             ReceivedFilePath : string
             ReadInterval : int
             WriteInterval : int
+            Sqlite : string
         }

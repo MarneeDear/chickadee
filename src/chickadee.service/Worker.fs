@@ -20,6 +20,7 @@ module Workers =
             ReceivedFilePath = cnf.GetValue("ReceivedFilePath")
             ReadInterval = int (cnf.GetValue("ReadInterval"))
             WriteInterval = int (cnf.GetValue("WriteInterval"))
+            Sqlite = config.GetSection("Database").GetValue("Sqlite")
         }
 
     type ReadWorker(logger : ILogger<ReadWorker>, configuration : IConfiguration ) =
@@ -36,20 +37,35 @@ module Workers =
                         logger.LogInformation(separator)
                         logger.LogInformation("No files found.")
                     for file in files do
-                        logger.LogInformation(separator)
-                        for result in (KissUtil.processKissUtilFramesInFile file) do
-                            logger.LogInformation(separator)
-                            let frame =
-                                match result with
-                                | Ok fr -> match fr with
-                                           | TNC2MON.Information.Message m                 -> logger.LogInformation(logFound (m.GetType().ToString()))
-                                                                                  //TODO do something with this -- add to the database
-                                           | TNC2MON.Information.PositionReport m          -> logger.LogInformation(logFound (m.GetType().ToString()))
-                                           | TNC2MON.Information.ParticipantStatusReport m -> logger.LogInformation(logFound (m.GetType().ToString()))
-                                           | TNC2MON.Information.Unsupported m             -> logger.LogInformation(logFound (m.GetType().ToString()))
-                                           logger.LogInformation(fr.ToString())
-                                | Error msg -> failwith msg
-                            logger.LogInformation(separator)
+                        logger.LogInformation separator
+                        logger.LogInformation file
+                        KissUtil.getRecords st.ReceivedFilePath None
+                        |> Array.iter (fun r -> logger.LogInformation (logFound r))
+                        let fileInfo = new System.IO.FileInfo(file)
+                        
+                        let logResults (r:Result<int, exn>) =
+                            match r with
+                            | Ok _ -> ()
+                            | Error e -> logger.LogInformation e.Message
+
+                        KissUtil.saveReveivedRawMessages st.Sqlite st.ReceivedFilePath (Some fileInfo.Name)
+                        |> Array.iter logResults                        
+                        
+                        System.IO.File.Move (file, (sprintf "%s/processed/%s" st.ReceivedFilePath fileInfo.Name))
+                        //for result in (KissUtil.processKissUtilFramesInFile file) do
+                        //    logger.LogInformation(separator)
+                             
+                        //    //let frame =
+                        //    //    match result with
+                        //    //    | Ok fr -> match fr with
+                        //    //               | TNC2MON.Information.Message m                 -> logger.LogInformation(logFound (m.GetType().ToString()))
+                        //    //                                                      //TODO do something with this -- add to the database
+                        //    //               | TNC2MON.Information.PositionReport m          -> logger.LogInformation(logFound (m.GetType().ToString()))
+                        //    //               | TNC2MON.Information.ParticipantStatusReport m -> logger.LogInformation(logFound (m.GetType().ToString()))
+                        //    //               | TNC2MON.Information.Unsupported m             -> logger.LogInformation(logFound (m.GetType().ToString()))
+                        //    //               logger.LogInformation(fr.ToString())
+                        //    //    | Error msg -> failwith msg
+                        //    //logger.LogInformation(separator)
                     do! Task.Delay(st.ReadInterval, stoppingToken) 
                     //do! Task.Delay(10000, stoppingToken)
             } :> Task
