@@ -352,3 +352,10 @@ REC*
 XMIT*
 database.sqlite
 packages/
+src/chickadee.tests/ChickTestResults.xml
+.ionide/symbolCache.db
+src/chickadee.tests/.vscode/settings.json
+.vscode/settings.json
+src/chickadee.tests/Properties/launchSettings.json
+src/chickadee.migrations/.vscode/settings.json
+src/chickadee.tests/*chick.txt
