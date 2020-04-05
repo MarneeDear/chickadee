@@ -17,6 +17,8 @@ let main argv =
     Console.WriteLine database_location
     let assembly = Assembly.Load("chickadee.migrations") // Assembly.GetExecutingAssembly()
     use db = new SqliteConnection (database_location) //"DataSource=..\..\database\database.sqlite"
+    //Drop database and recreate it
+    System.IO.File.Delete("./database.sqlite")
     let provider = SqliteDatabaseProvider(db)
     let migrator = SimpleMigrator(assembly, provider)
     let consoleRunner = ConsoleRunner(migrator)
@@ -30,10 +32,13 @@ let main argv =
     //TNC2MONRepositoryTests.ProcessTNC2RecordTests
     //|> runTests config
 
-    TNC2FormatTests.RawPacketTypeTests
-    |> runTests config
+    //TNC2FormatTests.RawPacketTypeTests
+    //|> runTests config
 
-    //runTestsInAssembly config argv
+    //DireWolfTests.WriteFramesTests
+    //|> runTests config
+
+    runTestsInAssembly config argv
 
     //runTestsInAssembly defaultConfig argv
     //Console.ReadKey() |> ignore

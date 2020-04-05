@@ -53,7 +53,7 @@ module Workers =
                             | Ok _ -> ()
                             | Error e -> logger.LogInformation e.Message
 
-                        KissUtil.saveReveivedRawMessages st.Sqlite st.ReceivedFilePath (Some fileInfo.Name)
+                        KissUtil.saveReveivedRawRecordss st.Sqlite st.ReceivedFilePath (Some fileInfo.Name)
                         |> Array.iter logResults                        
                         
                         System.IO.File.Move (file, (sprintf "%s/processed/%s" st.ReceivedFilePath fileInfo.Name))

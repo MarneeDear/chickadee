@@ -55,7 +55,7 @@ let PACKET =
 let WriteTNC2RecordTests =
     testList "Write record to a kissutil file" [
         testCase "A file is created in the path provided" <| fun _ ->
-            let file = writePacketToKissUtil None [PACKET] FILE_PATH
+            let file = writePacketToKissUtil None FILE_PATH [PACKET] 
             Expect.isTrue (File.Exists(file)) (sprintf "The frame file was created. [%s]" file)
     ]
 
@@ -72,7 +72,7 @@ let ProcessTNC2RecordTests =
             let frames = processKissUtilFramesInDirectory (Path.Combine(FILE_PATH, REC)) None              
             frames |> Array.iter (fun f -> Expect.isOk f "DireWolf frame was not parsed")
         testCase "Can save received records" <| fun _ ->
-            saveReveivedRawMessages CONN (Path.Combine(FILE_PATH, REC)) None |> Array.iter (fun r -> Expect.isOk r "Record was not saved.")
+            saveReveivedRawRecordss CONN (Path.Combine(FILE_PATH, REC)) None |> Array.iter (fun r -> Expect.isOk r "Record was not saved.")
     ]
 
 //[0] K1NRO-1>APDW14,WIDE2-2:!4238.80NS07105.63W#PHG5630

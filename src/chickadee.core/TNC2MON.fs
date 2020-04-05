@@ -80,7 +80,7 @@ module TNC2MON =
             | PositionReportWithoutTimeStampWithMessaging   -> "Position without timestamp (with APRS messaging)"
             | StatusReport                                  -> "Status Report"
             | Query                                         -> "Query"
-            | PositionReportWithTimestampWithMessaging       -> "Position with timestamp (with APRS messaging)"
+            | PositionReportWithTimestampWithMessaging      -> "Position with timestamp (with APRS messaging)"
             | TelemetryReport                               -> "Telemetry Report"
             | MaidenheadGridLocatorBeacon                   -> "Maidenhead grid locator beacon (obsolete)"
             | WeatherReportWihtoutPosition                  -> "Weather Report (without position)"

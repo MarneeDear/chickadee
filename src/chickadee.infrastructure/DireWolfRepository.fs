@@ -9,6 +9,7 @@ open FSharp.Control.Tasks
 open System.Threading.Tasks
 open Microsoft.Data.Sqlite
 open chickadee.core.TNC2MON
+open System.Collections.Generic
 
 module KissUtil =
     open chickadee.infrastructure.TNC2MONRepository
@@ -63,7 +64,7 @@ module KissUtil =
         |> Array.map (fun f -> convertRecordToAPRSData f)
 
     [<CLIMutable>]
-    type RawFrameRecord =
+    type RawReceivedFrameRecord =
         {
             raw_packet   : string
             packet_type  : string
@@ -79,6 +80,22 @@ module KissUtil =
             transmitted : int
         }
 
+    type TransmittedList =
+        {
+            list : string
+        }
+
+    type TransmittedId =
+        {
+            id : int
+        }
+
+    let saveTransmitFrame connectionString (frame:RawTransmitted) : Task<Result<int,exn>> =
+        task {
+            use connection = new SqliteConnection(connectionString)
+            return! execute connection "INSERT into transmitted (raw_packet, packet_type)
+                                        VALUES (@raw_packet, @packet_type);" frame
+        }
 
     let getTransmit connectionString : Task<Result<RawTransmitted seq, exn>> =
         task {
@@ -88,16 +105,35 @@ module KissUtil =
                                       WHERE transmitted = 0;" None            
         }
 
+    let setTransmitted connectionString (idList: int list) : Task<Result<int,exn>> list =
+        //let qParams = new Dictionary<string, string>()        
+        //qParams.Add("list", idList |> List.map (fun id -> string id) |> String.concat ",")
+        //let txList = 
+        //    {
+        //        list = idList |> List.map (fun id -> string id) |> String.concat ","
+        //    }
+        //let txId id =
+        //    {
+        //        id = id
+        //    }
+        let execute (txId:TransmittedId) =            
+            task {
+                use connection = new SqliteConnection(connectionString)
+                return! execute connection "UPDATE transmitted
+                                            SET transmitted = 1
+                                            WHERE rowid = (@id);" txId
+            }
+        idList |> List.map (fun i -> { id = i }) |> List.map execute
+
     let writeFramesToKissUtil (connectionString:String) (path:string) =
         task {
             let! transmit = getTransmit connectionString
             match transmit with
-            | Ok result -> //write to database
-                      return ((result |> Seq.map (fun r -> r.raw_packet) |> Seq.toList |> writeFrameToKissUtil None path) , (result |> Seq.map (fun r -> r.rowid))) |> Ok                      
+            | Ok result -> return ((result |> Seq.map (fun r -> r.raw_packet) |> Seq.toList |> writeFrameToKissUtil None path) , (result |> Seq.map (fun r -> r.rowid))) |> Ok                      
             | Error exn -> return Error exn
         }
 
-    let saveRawFrame connectionString (frame:RawFrameRecord) : Task<Result<int,exn>> =
+    let saveRawReceivedFrame connectionString (frame:RawReceivedFrameRecord) : Task<Result<int,exn>> =
         task { //datetime('now')
             use connection = new SqliteConnection(connectionString)
             return! execute connection "INSERT INTO received(raw_packet, packet_type, error)
@@ -117,7 +153,7 @@ module KissUtil =
             | Some f -> getRecords f
             | None   -> files |> Array.map (fun f -> f.Name) |> Array.map (fun f -> getRecords f) |> Array.head
         
-    let saveReveivedRawMessages connectionString path (file: string option) =
+    let saveReveivedRawRecordss connectionString path (file: string option) =
         let rcrds = 
             match file with
             | None -> getRecords path None
@@ -131,7 +167,7 @@ module KissUtil =
             }
         let doSave frame =
             task {
-                return! (saveRawFrame connectionString frame)
+                return! (saveRawReceivedFrame connectionString frame)
             }           
         let saveFrame rcrd = 
             match (|Frame|_|) rcrd with
