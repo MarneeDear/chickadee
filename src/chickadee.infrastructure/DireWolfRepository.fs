@@ -8,25 +8,37 @@ open System.IO
 open FSharp.Control.Tasks
 open System.Threading.Tasks
 open Microsoft.Data.Sqlite
+open chickadee.core.TNC2MON
 
 module KissUtil =
     open chickadee.infrastructure.TNC2MONRepository
 
-    //Write a TNC2MON packet to a file that will be read and transmitted by Dire Wolf vis the kissutil
-    //See Dire Wolf User Guide section 14.6.3 Transmit frames from files
-    let writeKissUtilRecord (commands: KISS.Command list option) (packets: TNC2MON.Packet list) (saveTo:string) timestamp =
-        let file = Path.Combine(Path.GetFullPath(saveTo), sprintf "%s%s" timestamp "chick.txt")
-        
-        let kiss =
-            commands
-            |> Option.defaultValue []
-            |> List.map (fun c -> string (c.ToString()))        
+    let timestamp = (DateTime.Now.ToString("yyyyMMddHHmmssff"))
+
+    let kiss commands =
+        commands
+        |> Option.defaultValue []
+        |> List.map (fun c -> string (c.ToString()))      
+
+    (*
+    Files are deleted after they are transmitted
+    Write a TNC2MON packet to a file that will be read and transmitted by Dire Wolf vis the kissutil
+    See Dire Wolf User Guide section 14.6.3 Transmit frames from files
+    *)
+    let writePacketToKissUtil (commands: KISS.Command list option) (saveTo:string) (packets: TNC2MON.Packet list) =
+        let file = Path.Combine(Path.GetFullPath(saveTo), sprintf "%s%s" timestamp "chick.txt")        
         
         let frames = 
             packets 
             |> List.map (fun p -> p.ToString())
         
-        File.WriteAllLines (file, kiss @ frames) |> ignore //put the commands first and then the frames
+        File.WriteAllLines (file, (kiss commands) @ frames) |> ignore //put the commands first and then the frames
+        file
+
+    let writeFrameToKissUtil (commands: KISS.Command list option) (saveTo:string) (frames:string list) =
+        let file = Path.Combine(Path.GetFullPath(saveTo), sprintf "%s%s" timestamp "chick.txt")
+        File.WriteAllLines (file, (kiss commands) @ frames) |> ignore //put the commands first and then the frames
+        file
 
     //All received frames are displayed in the usual monitor format, preceded with the channel number inside of [ ].
     //[0] K1NRO-1>APDW14,WIDE2-2:!4238.80NS07105.63W#PHG5630
@@ -56,6 +68,33 @@ module KissUtil =
             raw_packet   : string
             packet_type  : string
             error        : string
+        }
+
+    [<CLIMutable>]
+    type RawTransmitted =
+        {
+            rowid : int
+            raw_packet : string
+            packet_type : string
+            transmitted : int
+        }
+
+
+    let getTransmit connectionString : Task<Result<RawTransmitted seq, exn>> =
+        task {
+            use connection = new SqliteConnection(connectionString)
+            return! query connection "SELECT rowid, date_created, raw_packet, packet_type, transmitted 
+                                      FROM transmitted
+                                      WHERE transmitted = 0;" None            
+        }
+
+    let writeFramesToKissUtil (connectionString:String) (path:string) =
+        task {
+            let! transmit = getTransmit connectionString
+            match transmit with
+            | Ok result -> //write to database
+                      return ((result |> Seq.map (fun r -> r.raw_packet) |> Seq.toList |> writeFrameToKissUtil None path) , (result |> Seq.map (fun r -> r.rowid))) |> Ok                      
+            | Error exn -> return Error exn
         }
 
     let saveRawFrame connectionString (frame:RawFrameRecord) : Task<Result<int,exn>> =

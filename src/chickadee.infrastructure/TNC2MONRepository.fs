@@ -184,6 +184,7 @@ module TNC2MONRepository =
             | TNC2MON.RawInformation.UserDefined -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
                                                mapParticipantReport (info.Substring 1)
             | TNC2MON.RawInformation.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
+            | _ -> mapUnsupportedMessage(info.Substring 1) |> Ok
 
         frame record
         |> Result.bind information

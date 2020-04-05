@@ -120,9 +120,11 @@ module Main =
                 //Some [ TxDelay 0; TxDelay 0; ] //2 seconds in 10 ms units
                 None
 
-            match saveTo with
-            | Some path -> writeKissUtilRecord txDelay [packet] path (DateTime.Now.ToString("yyyyMMddHHmmssff")) 
-            | None      -> ()
+            let file = 
+                match saveTo with
+                | Some path -> writePacketToKissUtil txDelay [packet] path
+                | None      -> String.Empty
+            Console.WriteLine file
         with e ->
             Console.error <| (sprintf "%s" e.Message)
 

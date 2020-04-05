@@ -2,7 +2,7 @@
 
 module Settings =
 
-    type DireWolfSettings =
+    type WorkerOptions =
         {
             TransmitFilePath : string
             TransmitFileNameSuffix : string
@@ -10,4 +10,10 @@ module Settings =
             ReadInterval : int
             WriteInterval : int
             Sqlite : string
+            Environment : string
         }
+    type DatabaseSettings =
+        {
+            Sqlite : string
+        }
+

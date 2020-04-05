@@ -7,11 +7,10 @@ type CreateTransmitted() =
 
   override __.Up() =
     base.Execute(@"CREATE TABLE transmitted (
-    	rowid	INTEGER NOT NULL,
-    	timestamp	TEXT NOT NULL,
-    	message	TEXT NOT NULL,
-    	type	TEXT NOT NULL,
-    	PRIMARY KEY(rowid)
+	    date_created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    	raw_packet	TEXT NOT NULL,
+    	packet_type	TEXT NOT NULL,
+    	transmitted	INTEGER NOT NULL DEFAULT 0    
     );")
 
   override __.Down() =

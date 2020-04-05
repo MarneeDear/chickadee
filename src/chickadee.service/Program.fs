@@ -6,23 +6,22 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
+open Microsoft.AspNetCore
+
+(*
+https://stackoverflow.com/questions/58183920/how-to-setup-app-settings-in-a-net-core-3-worker-service
+*)
 
 [<EntryPoint>]
 let main argv =
     printfn "The Chickadee service is starting ... ."
     Host.CreateDefaultBuilder(argv)
-        .ConfigureServices(fun hostContext services -> 
-            //hostContext.HostingEnvironment.EnvironmentName <- "Development"
-
-            services.AddHostedService<chickadee.service.Workers.ReadWorker>() |> ignore
-            services.AddHostedService<chickadee.service.Workers.WriteWorker>() |> ignore
-            //()
-            //let env = hostContext.HostingEnvironment
-            //if (env.IsDevelopment()) then
-            //    hostContext.Configuration()
-        )
         .ConfigureAppConfiguration(fun hostingContext config ->
             config.AddEnvironmentVariables() |> ignore
+        )
+        .ConfigureServices(fun hostContext services -> 
+            services.AddHostedService<chickadee.service.Workers.ReadWorker>() |> ignore
+            services.AddHostedService<chickadee.service.Workers.WriteWorker>() |> ignore
         )
         .Build().Run()
     
