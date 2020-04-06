@@ -106,16 +106,6 @@ module KissUtil =
         }
 
     let setTransmitted connectionString (idList: int list) : Task<Result<int,exn>> list =
-        //let qParams = new Dictionary<string, string>()        
-        //qParams.Add("list", idList |> List.map (fun id -> string id) |> String.concat ",")
-        //let txList = 
-        //    {
-        //        list = idList |> List.map (fun id -> string id) |> String.concat ","
-        //    }
-        //let txId id =
-        //    {
-        //        id = id
-        //    }
         let execute (txId:TransmittedId) =            
             task {
                 use connection = new SqliteConnection(connectionString)
@@ -153,7 +143,7 @@ module KissUtil =
             | Some f -> getRecords f
             | None   -> files |> Array.map (fun f -> f.Name) |> Array.map (fun f -> getRecords f) |> Array.head
         
-    let saveReveivedRawRecordss connectionString path (file: string option) =
+    let saveReveivedRawRecords connectionString path (file: string option) =
         let rcrds = 
             match file with
             | None -> getRecords path None
