@@ -35,10 +35,10 @@ let main argv =
     //TNC2FormatTests.RawPacketTypeTests
     //|> runTests config
 
-    //DireWolfTests.WriteFramesTests
-    //|> runTests config
+    DireWolfTests.WriteFramesTests
+    |> runTests config
 
-    runTestsInAssembly config argv
+    //runTestsInAssembly config argv
 
     //runTestsInAssembly defaultConfig argv
     //Console.ReadKey() |> ignore

@@ -55,7 +55,7 @@ let PACKET =
 let WriteTNC2RecordTests =
     testList "Write record to a kissutil file" [
         testCase "A file is created in the path provided" <| fun _ ->
-            let file = writePacketToKissUtil None FILE_PATH [PACKET] 
+            let file = writePacketsToKissUtil None FILE_PATH [PACKET] 
             Expect.isTrue (File.Exists(file)) (sprintf "The frame file was created. [%s]" file)
     ]
 

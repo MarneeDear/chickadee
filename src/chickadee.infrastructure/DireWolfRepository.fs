@@ -14,32 +14,14 @@ open System.Collections.Generic
 module KissUtil =
     open chickadee.infrastructure.TNC2MONRepository
 
-    let timestamp = (DateTime.Now.ToString("yyyyMMddHHmmssff"))
+    let private timestamp = (DateTime.Now.ToString("yyyyMMddHHmmssff"))
 
-    let kiss commands =
+    let private kiss commands =
         commands
         |> Option.defaultValue []
-        |> List.map (fun c -> string (c.ToString()))      
-
-    (*
-    Files are deleted after they are transmitted
-    Write a TNC2MON packet to a file that will be read and transmitted by Dire Wolf vis the kissutil
-    See Dire Wolf User Guide section 14.6.3 Transmit frames from files
-    *)
-    let writePacketToKissUtil (commands: KISS.Command list option) (saveTo:string) (packets: TNC2MON.Packet list) =
-        let file = Path.Combine(Path.GetFullPath(saveTo), sprintf "%s%s" timestamp "chick.txt")        
+        |> List.map (fun c -> string (c.ToString()))   
         
-        let frames = 
-            packets 
-            |> List.map (fun p -> p.ToString())
-        
-        File.WriteAllLines (file, (kiss commands) @ frames) |> ignore //put the commands first and then the frames
-        file
-
-    let writeFrameToKissUtil (commands: KISS.Command list option) (saveTo:string) (frames:string list) =
-        let file = Path.Combine(Path.GetFullPath(saveTo), sprintf "%s%s" timestamp "chick.txt")
-        File.WriteAllLines (file, (kiss commands) @ frames) |> ignore //put the commands first and then the frames
-        file
+    let private file path = Path.Combine(Path.GetFullPath(path), sprintf "%s%s" timestamp "chick.txt")
 
     //All received frames are displayed in the usual monitor format, preceded with the channel number inside of [ ].
     //[0] K1NRO-1>APDW14,WIDE2-2:!4238.80NS07105.63W#PHG5630
@@ -58,9 +40,7 @@ module KissUtil =
                         |> Array.head
  
     let processKissUtilFramesInFile (file: string) =
-         //let d = new DirectoryInfo(path) //Assuming Test is your Folder
-         //let files = d.GetFiles()  //GetFiles("*.txt"); //Getting Text files
-        File.ReadAllLines file // (Path.Combine(path, fileName))
+        File.ReadAllLines file 
         |> Array.map (fun f -> convertRecordToAPRSData f)
 
     [<CLIMutable>]
@@ -105,39 +85,61 @@ module KissUtil =
                                       WHERE transmitted = 0;" None            
         }
 
-    let setTransmitted connectionString (idList: int list) : Task<Result<int,exn>> list =
-        let execute (txId:TransmittedId) =            
+    let setTransmitted connectionString (idList: int list) : Task<Result<int,exn>> =
+        let update list =
+            sprintf "UPDATE transmitted SET transmitted = 1 WHERE rowid IN (%s);" list
+        let execute (idList:string) =            
             task {
                 use connection = new SqliteConnection(connectionString)
-                return! execute connection "UPDATE transmitted
-                                            SET transmitted = 1
-                                            WHERE rowid = (@id);" txId
+                return! execute connection (update idList) None
             }
-        idList |> List.map (fun i -> { id = i }) |> List.map execute
+        idList |> List.map string |> String.concat "," |> execute
 
-    let writeFramesToKissUtil (connectionString:String) (path:string) =
-        task {
-            let! transmit = getTransmit connectionString
-            match transmit with
-            | Ok result -> return ((result |> Seq.map (fun r -> r.raw_packet) |> Seq.toList |> writeFrameToKissUtil None path) , (result |> Seq.map (fun r -> r.rowid))) |> Ok                      
-            | Error exn -> return Error exn
-        }
+    let writeFramesToKissUtil (commands: KISS.Command list option) (saveTo:string) (frames:string list) =
+        File.WriteAllLines (file saveTo, (kiss commands) @ frames) |> ignore //put the commands first and then the frames
+        file saveTo
+
+    let writeStoredFramesToKissUtil (connectionString:String) (commands: KISS.Command list option) (path:string) =
+        let doGet =
+            task {
+                return! getTransmit connectionString
+            }
+        match doGet.Result with
+        | Ok result when result |> Seq.length > 0 -> 
+                                                    ((result |> Seq.map (fun r -> r.raw_packet) 
+                                                    |> Seq.toList |> writeFramesToKissUtil commands path) , (result |> Seq.map (fun r -> r.rowid))) 
+                                                    |> Ok                      
+        | Ok _ -> (String.Empty, Seq.empty) |> Ok
+        | Error exn -> Error exn
+
+    (*
+    Files are deleted after they are transmitted
+    Write a TNC2MON packet to a file that will be read and transmitted by Dire Wolf vis the kissutil
+    See Dire Wolf User Guide section 14.6.3 Transmit frames from files
+    *)
+    let writePacketsToKissUtil (commands: KISS.Command list option) (saveTo:string) (packets: TNC2MON.Packet list) =       
+        let frames = 
+            packets 
+            |> List.map (fun p -> p.ToString())
+        
+        File.WriteAllLines (file saveTo, (kiss commands) @ frames) |> ignore //put the commands first and then the frames
+        file saveTo
 
     let saveRawReceivedFrame connectionString (frame:RawReceivedFrameRecord) : Task<Result<int,exn>> =
-        task { //datetime('now')
+        task { 
             use connection = new SqliteConnection(connectionString)
             return! execute connection "INSERT INTO received(raw_packet, packet_type, error)
             VALUES (@raw_packet, @packet_type, @error);" frame
         }
 
-    let informationType frame =
+    let private informationType frame =
         match (|Information|_|) frame with
         | Some i    -> TNC2MON.getRawPaketType(i.Substring(0, 1)).ToString()
         | None      -> "No information part found."
 
     let getRecords path (file: string option) =
             let d = new DirectoryInfo(path);//Assuming Test is your Folder
-            let files = d.GetFiles()  //GetFiles("*.txt"); //Getting Text files
+            let files = d.GetFiles()  
             let getRecords fileName = File.ReadAllLines (Path.Combine(path, fileName))
             match file with
             | Some f -> getRecords f

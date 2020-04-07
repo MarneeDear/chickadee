@@ -122,7 +122,7 @@ module Main =
 
             let file = 
                 match saveTo with
-                | Some path -> writePacketToKissUtil txDelay path [packet]
+                | Some path -> writePacketsToKissUtil txDelay path [packet]
                 | None      -> String.Empty
             Console.WriteLine file
         with e ->

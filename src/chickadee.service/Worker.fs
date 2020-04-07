@@ -12,17 +12,16 @@ module Workers =
     open chickadee.infrastructure.DireWolf
     open chickadee.core
 
-    let settings (config:IConfiguration) : Settings.WorkerOptions = //configuration.GetSection("DireWolf").Get<Settings.DireWolfSettings>()
+    let getSettings (config:IConfiguration) : Settings.WorkerOptions = 
         let cnf = config.GetSection("DireWolf")
         {
-            TransmitFilePath = cnf.GetValue("ReadInterval")
+            TransmitFilePath = cnf.GetValue("TransmitFilePath")
             TransmitFileNameSuffix = cnf.GetValue("TransmitFileNameSuffix")
             ReceivedFilePath = cnf.GetValue("ReceivedFilePath")
             ReadInterval = int (cnf.GetValue("ReadInterval"))
             WriteInterval = int (cnf.GetValue("WriteInterval"))
-            //Sqlite = config.GetSection("Database").GetValue("Sqlite")
-            Sqlite = ""
-            Environment = config.GetValue("Environment") //cnf.GetValue("Environment")
+            Sqlite = config.GetSection("Database").GetValue("Sqlite")
+            Environment = config.GetValue("Environment") 
         }
 
     type ReadWorker(logger : ILogger<ReadWorker>, configuration : IConfiguration ) =
@@ -30,21 +29,19 @@ module Workers =
 
         override _.ExecuteAsync(stoppingToken : CancellationToken) =
             
-            let st = settings configuration
+            let settings = getSettings configuration
             let logFound = sprintf "READING [%s]"
             let separator = "------------------------------------------------------------"
             task {
-                //do! Console.Out.WriteLineAsync(sprintf "ENVIRONMENT [%s]" st.Environment)
-                //do! Console.Out.WriteLineAsync(sprintf "ENVIRONMENT [%s]" (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")))
                 while not stoppingToken.IsCancellationRequested do                    
-                    let files = System.IO.Directory.GetFiles(st.ReceivedFilePath)
+                    let files = System.IO.Directory.GetFiles(settings.ReceivedFilePath)
                     if files.Length = 0 then
                         logger.LogInformation(separator)
                         logger.LogInformation("No files found.")
                     for file in files do
                         logger.LogInformation separator
                         logger.LogInformation file
-                        KissUtil.getRecords st.ReceivedFilePath None
+                        KissUtil.getRecords settings.ReceivedFilePath None
                         |> Array.iter (fun r -> logger.LogInformation (logFound r))
                         let fileInfo = new System.IO.FileInfo(file)
                         
@@ -53,23 +50,30 @@ module Workers =
                             | Ok _ -> ()
                             | Error e -> logger.LogInformation e.Message
 
-                        KissUtil.saveReveivedRawRecords st.Sqlite st.ReceivedFilePath (Some fileInfo.Name)
+                        KissUtil.saveReveivedRawRecords settings.Sqlite settings.ReceivedFilePath (Some fileInfo.Name)
                         |> Array.iter logResults                        
                         
-                        System.IO.File.Move (file, (sprintf "%s/processed/%s" st.ReceivedFilePath fileInfo.Name))
-                    do! Task.Delay(st.ReadInterval, stoppingToken) 
+                        System.IO.File.Move (file, (sprintf "%s/processed/%s" settings.ReceivedFilePath fileInfo.Name))
+                    do! Task.Delay(settings.ReadInterval, stoppingToken) 
             } :> Task
 
-    type WriteWorker(logger : ILogger<ReadWorker>, configuration : IConfiguration ) =
+    type WriteWorker(logger : ILogger<WriteWorker>, configuration : IConfiguration ) =
         inherit BackgroundService()
-
-        let st = settings configuration
-
         override _.ExecuteAsync(stoppingToken : CancellationToken) =
+            let settings = getSettings configuration
+
             task {
                 while not stoppingToken.IsCancellationRequested do
-                    //do! Console.Out.WriteLineAsync("HELLO WRITE ME")
-                    //do! Task.Delay(st.WriteInterval, stoppingToken)
-                    do! Task.Delay(st.WriteInterval, stoppingToken)
+                    logger.LogInformation("Checking for transmit frames.")
+                    let result = KissUtil.writeStoredFramesToKissUtil settings.Sqlite None settings.TransmitFilePath
+                    match result with
+                    | Ok (file, ids) when not (System.String.IsNullOrEmpty(file)) ->  logger.LogInformation(sprintf "WROTE kiss util file [%s]" file)
+                                                                                      let! txResult = KissUtil.setTransmitted settings.Sqlite (ids |> Seq.toList) 
+                                                                                      match txResult with
+                                                                                      | Ok _ -> logger.LogInformation("Transmitted records were set to transmitted in the database.")
+                                                                                      | Error exn -> logger.LogError(sprintf "ERROR updating transmitted records [%s]" exn.Message)
+                    | Ok (_, _) -> logger.LogInformation("No new frames to transmit.")
+                    | Error exn -> logger.LogError(sprintf "ERROR writing to transmit file [%s]" exn.Message)
+                    do! Task.Delay(settings.WriteInterval, stoppingToken)
                             
             } :> Task
