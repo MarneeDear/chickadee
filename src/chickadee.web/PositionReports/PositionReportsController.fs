@@ -1,4 +1,4 @@
-﻿namespace PositionReport
+﻿namespace PositionReports
 
 open Saturn
 open FSharp.Control.Tasks.ContextInsensitive

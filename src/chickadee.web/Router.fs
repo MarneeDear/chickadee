@@ -3,7 +3,7 @@ module Router
 open Saturn
 open Giraffe.Core
 open Giraffe.ResponseWriters
-open PositionReport
+open PositionReports
 
 let browser = pipeline {
     plug acceptHtml
@@ -29,7 +29,7 @@ let browserRouter = router {
     //Will I store them in a database? SQL Lite?
     //POST a message to send with KISSUTIL
     //Store sent messages and give option to re-send
-    forward "/position_reports" PositionReport.Controller.resource
+    forward "/position_reports" PositionReports.Controller.resource
 
     //RACE REPORTS
     forward "/race_reports" RaceReport.Controller.resource

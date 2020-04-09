@@ -1,4 +1,4 @@
-﻿namespace PositionReport
+﻿namespace PositionReports
 
 module Views =
     open Microsoft.AspNetCore.Http

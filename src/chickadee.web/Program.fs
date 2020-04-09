@@ -17,7 +17,7 @@ let app = application {
     memory_cache
     use_static "static"
     use_gzip
-    use_config (fun _ -> {connectionString = "DataSource=database.sqlite"} ) //TODO: Set development time configuration
+    use_config (fun _ -> {connectionString = "DataSource=..\..\database\database.sqlite;"} ) //TODO: Set development time configuration
 }
 
 [<EntryPoint>]

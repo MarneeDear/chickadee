@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="appsettings.Development.json" />
+    <None Include="appsettings.json" />
     <None Include="web.config" />
     <Content Include="favicon.ico" />
     <Content Include="static\logo-cropped.png" />
@@ -26,9 +28,9 @@
     <Compile Include="RaceReports\RaceReportModels.fs" />
     <Compile Include="RaceReports\RaceReportViews.fs" />
     <Compile Include="RaceReports\RaceReportController.fs" />
-    <Compile Include="PositionReport\PositionReportModels.fs" />
-    <Compile Include="PositionReport\PositionReportViews.fs" />
-    <Compile Include="PositionReport\PositionReportController.fs" />
+    <Compile Include="PositionReports\PositionReportsModels.fs" />
+    <Compile Include="PositionReports\PositionReportsViews.fs" />
+    <Compile Include="PositionReports\PositionReportsController.fs" />
     <Compile Include="Router.fs" />
     <Compile Include="Program.fs" />
     <None Include="paket.references" />
@@ -47,6 +49,9 @@
     <Content Include="*.sqlite">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\chickadee.core\chickadee.core.fsproj" />
