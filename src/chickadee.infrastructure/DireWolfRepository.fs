@@ -44,17 +44,19 @@ module KissUtil =
         |> Array.map (fun f -> convertRecordToAPRSData f)
 
     [<CLIMutable>]
-    type RawReceivedFrameRecord =
+    type RawReceivedFrame =
         {
+            date_created : string
             raw_packet   : string
             packet_type  : string
             error        : string
         }
 
     [<CLIMutable>]
-    type RawTransmitted =
+    type RawTransmittedFrame =
         {
             rowid : int
+            date_created : string
             raw_packet : string
             packet_type : string
             transmitted : int
@@ -70,14 +72,14 @@ module KissUtil =
             id : int
         }
 
-    let saveTransmitFrame connectionString (frame:RawTransmitted) : Task<Result<int,exn>> =
+    let saveTransmitFrame connectionString (frame:RawTransmittedFrame) : Task<Result<int,exn>> =
         task {
             use connection = new SqliteConnection(connectionString)
             return! execute connection "INSERT into transmitted (raw_packet, packet_type)
                                         VALUES (@raw_packet, @packet_type);" frame
         }
 
-    let getTransmit connectionString : Task<Result<RawTransmitted seq, exn>> =
+    let getTransmitFrames connectionString : Task<Result<RawTransmittedFrame seq, exn>> =
         task {
             use connection = new SqliteConnection(connectionString)
             return! query connection "SELECT rowid, date_created, raw_packet, packet_type, transmitted 
@@ -102,7 +104,7 @@ module KissUtil =
     let writeStoredFramesToKissUtil (connectionString:String) (commands: KISS.Command list option) (path:string) =
         let doGet =
             task {
-                return! getTransmit connectionString
+                return! getTransmitFrames connectionString
             }
         match doGet.Result with
         | Ok result when result |> Seq.length > 0 -> 
@@ -125,7 +127,7 @@ module KissUtil =
         File.WriteAllLines (file saveTo, (kiss commands) @ frames) |> ignore //put the commands first and then the frames
         file saveTo
 
-    let saveRawReceivedFrame connectionString (frame:RawReceivedFrameRecord) : Task<Result<int,exn>> =
+    let saveRawReceivedFrame connectionString (frame:RawReceivedFrame) : Task<Result<int,exn>> =
         task { 
             use connection = new SqliteConnection(connectionString)
             return! execute connection "INSERT INTO received(raw_packet, packet_type, error)
@@ -137,7 +139,7 @@ module KissUtil =
         | Some i    -> TNC2MON.getRawPaketType(i.Substring(0, 1)).ToString()
         | None      -> "No information part found."
 
-    let getRecords path (file: string option) =
+    let private getRecords path (file: string option) =
             let d = new DirectoryInfo(path);//Assuming Test is your Folder
             let files = d.GetFiles()  
             let getRecords fileName = File.ReadAllLines (Path.Combine(path, fileName))
@@ -153,6 +155,7 @@ module KissUtil =
 
         let mapToRawFrameRecord error (frame:string)  =
             {
+                date_created = String.Empty
                 raw_packet = frame
                 packet_type = informationType frame
                 error = error
@@ -167,3 +170,11 @@ module KissUtil =
             | None   -> mapToRawFrameRecord rcrd "Record not in expected format." |> (fun f -> (doSave f).Result)
  
         rcrds |> Array.map saveFrame
+
+    let getReceivedFrames connectionString : Task<Result<RawReceivedFrame seq, exn>> =
+        task {
+            use connection = new SqliteConnection(connectionString)
+            return! query connection "SELECT date_created, raw_packet, packet_type
+                                      FROM received;" None            
+        }
+
