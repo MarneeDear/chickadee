@@ -359,3 +359,4 @@ src/chickadee.tests/.vscode/settings.json
 src/chickadee.tests/Properties/launchSettings.json
 src/chickadee.migrations/.vscode/settings.json
 src/chickadee.tests/*chick.txt
+src/chickadee.web/appsettings.Development.json
