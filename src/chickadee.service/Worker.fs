@@ -41,8 +41,8 @@ module Workers =
                     for file in files do
                         logger.LogInformation separator
                         logger.LogInformation file
-                        KissUtil.getRecords settings.ReceivedFilePath None
-                        |> Array.iter (fun r -> logger.LogInformation (logFound r))
+                        //KissUtil.getReceivedFrames settings.ReceivedFilePath None
+                        //|> Array.iter (fun r -> logger.LogInformation (logFound r))
                         let fileInfo = new System.IO.FileInfo(file)
                         
                         let logResults (r:Result<int, exn>) =
