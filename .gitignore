@@ -361,3 +361,4 @@ src/chickadee.migrations/.vscode/settings.json
 src/chickadee.tests/*chick.txt
 src/chickadee.web/appsettings.Development.json
 src/chickadee.web/Properties/launchSettings.json
+src/chickadee.web/static/bulma-0.8.0/
