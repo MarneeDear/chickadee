@@ -73,7 +73,7 @@ module TNC2MONRepository =
                                                 Addressee = c
                                                 MessageText = MessageText.create m
                                                 MessageNumber = MessageNumber.create n
-                                            } |> MessageType.Message |> TNC2MON.Information.Message |> Ok
+                                            } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
                                 | None -> Error "Addressee call sign not in expected format."
         //| _, _, _ -> [(a, "Addressee"; (m, "Message"); (n, "Message Number")] > List.fold (fun acc elem -> partMsg elem acc)
         | None, Some _, Some _ -> Error "Addressee part of message not in expected format."

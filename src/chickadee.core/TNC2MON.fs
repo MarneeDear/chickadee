@@ -117,14 +117,14 @@ module TNC2MON =
         | _   -> Unsupported
 
     type Information =
-        | Message                           of MessageType
+        | Message                           of MessageFormat
         | PositionReport                    of PositionReportType //PositionReportWithoutTimeStamp
         | ParticipantStatusReport           of Participant.ParticipantStatusReport
         | Unsupported                       of string
         override this.ToString() =
             match this with 
             | Message m                 -> match m with
-                                           | MessageType.Message r -> r.ToString()
+                                           | MessageFormat.Message r -> r.ToString()
                                            | _ -> "NOT IMPLEMENTED"
             | PositionReport r          -> match r with
                                            | PositionReportWithoutTimeStamp p -> p.ToString()

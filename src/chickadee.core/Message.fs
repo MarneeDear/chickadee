@@ -59,6 +59,16 @@ module Message =
         override this.ToString() =
             sprintf ":%s:%s{%s" (CallSign.value this.Addressee) (MessageText.value this.MessageText) (MessageNumber.value this.MessageNumber)
 
+    type MessageAcknowledgement =
+        {
+            Todo : string
+        }
+
+    type MessageRejection =
+        {
+            Toso : string
+        }
+
     //TODO
     type Bulletin = 
         {
@@ -71,7 +81,9 @@ module Message =
             TODO2 : string
         }
 
-    type MessageType =
+    type MessageFormat =
         | Message of Message
+        | MessageAcknowledgement of MessageAcknowledgement
+        | MessageRejection of MessageRejection
         | Bulletin of Bulletin
         | Announcement of Announcement
