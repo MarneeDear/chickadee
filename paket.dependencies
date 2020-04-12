@@ -16,6 +16,12 @@ nuget System.Configuration.ConfigurationManager
 nuget Dapper
 nuget Argu
 
+//LOGGING
+nuget Serilog.AspNetCore
+nuget Serilog.Sinks.Console
+nuget Serilog.Sinks.File
+nuget Serilog.Settings.Configuration
+
 //TEST
 nuget Microsoft.NET.Test.Sdk
 nuget YoloDev.Expecto.TestSdk

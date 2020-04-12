@@ -2,3 +2,6 @@
 Saturn
 Giraffe
 Microsoft.AspNetCore
+Serilog.AspNetCore
+Serilog.Sinks.Console
+Serilog.Sinks.File

@@ -44,9 +44,12 @@ module Controller =
 
             match mapToRx (), mapToTx () with
             | Ok rx, Ok tx -> return Views.index (Some rx) (Some tx) None None
-            | Error rErr, Ok tx -> return Views.index (None) (Some tx) (Some rErr.Message) None
-            | Ok rx, Error tErr -> return Views.index (Some rx) (None) (None) (Some tErr.Message)
-            | Error rErr, Error tErr -> return Views.index (None) (None) (Some rErr.Message) (Some tErr.Message)
+            | Error rErr, Ok tx ->  logger.LogError(rErr.Message)
+                                    return Views.index (None) (Some tx) (Some rErr.Message) None
+            | Ok rx, Error tErr ->  logger.LogError(tErr.Message)
+                                    return Views.index (Some rx) (None) (None) (Some tErr.Message)
+            | Error rErr, Error tErr -> logger.LogError(sprintf "[%s] [%s]" rErr.Message tErr.Message)
+                                        return Views.index (None) (None) (Some rErr.Message) (Some tErr.Message)
 
         }
 
