@@ -26,20 +26,28 @@ receives an acknowledgement, or it is canceled, or it times out.
 *)
 module Message =
 
+    type MessageID = private MessageID of int
+    module MessageID =
+        let create (n:int) =
+            match n with 
+            | n when n < 10 -> Some (MessageID n)
+            | _ -> None
+        let value (MessageID n) = n
+
     type MessageText = private MessageText of string
     module MessageText =
         let create (m:string) =
             match (m.Trim()) with
-            | m when m.Length <= 67    -> MessageText m 
-            | _                        -> MessageText (m.Substring(0, 67)) //TODO or return None TODO or throw an exception?
+            | m when m.Length < 68 && not (m.Contains("|")) && not (m.Contains("~")) -> Some (MessageText m)
+            | _ -> None //MessageText (m.Substring(0, 67)) //TODO or return None TODO or throw an exception?
         let value (MessageText m) = m
 
     type MessageNumber = private MessageNumber of string
     module MessageNumber =
         let create (n:string) =
             match (n.Trim()) with
-            | n when n.Length <= 5 -> MessageNumber n
-            | _ -> MessageNumber (n.Substring(0, 5)) //Or fail with None?
+            | n when n.Length <= 5 -> Some (MessageNumber n)
+            | _ -> None //MessageNumber (n.Substring(0, 5)) //Or fail with None?
         let value (MessageNumber n) = n
 
 
@@ -59,26 +67,94 @@ module Message =
         override this.ToString() =
             sprintf ":%s:%s{%s" (CallSign.value this.Addressee) (MessageText.value this.MessageText) (MessageNumber.value this.MessageNumber)
 
+    (*
+    Message Acknowledgement
+    A message acknowledgement is similar to a message, except that the message
+    text field contains just the letters ack, and this is followed by the Message
+    Number being acknowledged.
+
+    Message Acknowledgement Format
+    | : | Addressee | : | ack | Message |
+                                  No
+                                xxxxx
+    | 1|     9      | 1 | 3   |   1-5   |
+    
+    Example    :KB2ICI-14:ack003
+
+    *)
     type MessageAcknowledgement =
         {
-            Todo : string
+            Addresse : CallSign
+            MessageNumber : MessageNumber
         }
 
+    (*
+    Message Rejection If a station is unable to accept a message, it can send a rej message instead
+    of an ack message:
+
+    | : | Addressee | : | rej | Message No |
+    | 1 |     9     | 1 |  3  |   1-5      |
+
+    Example
+    :KB2ICI-14:rej003
+
+    *)
     type MessageRejection =
         {
-            Toso : string
+            Addressee : CallSign
+            MessageNumber : MessageNumber
         }
 
-    //TODO
+    (*
+    General Bulletins 
+    
+    General bulletins are messages where the addressee consists of the letters
+    BLN followed by a single-digit bulletin identifier, followed by 5 filler spaces.
+    General bulletins are generally transmitted a few times an hour for a few
+    hours, and typically contain time sensitive information (such as weather
+    status).
+    Bulletin text may be up to 67 characters long, and may contain any printable
+    ASCII characters except | or ~.
+
+    | : | BLN | Bulletin ID | _____ | : | Bulletin Text |
+    | 1 |  3  |     1       |   5   | 1 |    0-67       |
+
+    ---- is 5 filler spaces
+
+    Example
+    :BLN3_____:Snow expected in Tampa RSN
+    
+    *)
+
     type Bulletin = 
         {
-            TODO : string
+            BulletinId : MessageID
+            BulletinText : MessageText
         }
 
-    //TODO
+    (*
+    Announcements 
+    Announcements are similar to general bulletins, except that the letters BLN
+    are followed by a single upper-case letter announcement identifier.
+    Announcements are transmitted much less frequently than bulletins (but
+    perhaps for several days), and although possibly timely in nature they are
+    usually not time critical.
+    Announcements are typically made for situations leading up to an event, in
+    contrast to bulletins which are typically used within the event.
+    Users should be alerted on arrival of a new bulletin or announcement.
+    
+    | : | BLN | Announcement Id | _____ | : | Announcement Text |
+    | 1 |  3  |        1        |    5  | 1 |     0-67          |
+
+    Example
+    :BLNQ_____:Mt St Helen digi will be QRT this weekend
+
+    *)
+
     type Announcement =
         {
-            TODO2 : string
+            AnnouncementId : MessageID
+            AnnouncementText : MessageText
         }
 
     type MessageFormat =

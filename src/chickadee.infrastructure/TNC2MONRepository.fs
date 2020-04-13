@@ -57,24 +57,26 @@ module TNC2MONRepository =
         | Error msg -> Error msg
 
     let mapMessage (msg:string) = //Can I do this recursivley
-        //let partMsg (part, partName) =
-        //    match part with
-        //    | Some p -> String.Empty
-        //    | None -> sprintf "%s%s" partName "part of message not in expected format."
-            //match (a, m, n) with
-            //| None, Some _, Some _ -> "Addressee"
-            //| Some _, None, Some _ -> "Message"
-            //| Some _, Some _, None -> "Message Number"
-
         match (|Addressee|_|) msg, (|Message|_|) msg, (|MessageNumber|_|) msg with
-        | Some a, Some m, Some n -> 
-                                match CallSign.create a with
-                                | Some c -> {
-                                                Addressee = c
-                                                MessageText = MessageText.create m
-                                                MessageNumber = MessageNumber.create n
-                                            } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
-                                | None -> Error "Addressee call sign not in expected format."
+        | Some a, Some m, Some n -> {
+                                        Addressee = a
+                                        MessageText = m
+                                        MessageNumber = n
+                                     } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
+                                //match (CallSign.create a), (MessageText.create m) with
+                                //| Some c, Some m -> {
+                                //                        Addressee = c
+                                //                        MessageText = m
+                                //                        MessageNumber = MessageNumber.create n
+                                //                     } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
+                                //| 
+                                //match CallSign.create a with
+                                //| Some c -> {
+                                //                Addressee = c
+                                //                MessageText = MessageText.create m
+                                //                MessageNumber = MessageNumber.create n
+                                //            } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
+                                //| None -> Error "Addressee call sign not in expected format."
         //| _, _, _ -> [(a, "Addressee"; (m, "Message"); (n, "Message Number")] > List.fold (fun acc elem -> partMsg elem acc)
         | None, Some _, Some _ -> Error "Addressee part of message not in expected format."
         | Some _, None, Some _ -> Error "Message part of message not in expected format."

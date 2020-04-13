@@ -1,6 +1,8 @@
 ﻿namespace chickadee.core.DataFormats
 
 open System
+open chickadee.core.Message
+open chickadee.core
 
 module MessageActivePatterns =
 
@@ -15,17 +17,18 @@ module MessageActivePatterns =
     *)
     let (|Addressee|_|) (msg:string) =
         match msg.IndexOf(":") = 9 with
-        | true  -> Some (msg.Substring(0,9).Trim())
+        | true  -> CallSign.create (msg.Substring(0,9).Trim())
         | false -> None
 
     let (|Message|_|) (msg:string) = //msg.Substring(10, j - 10)
+        //&& not (m.Contains("|")) && not (m.Contains("~"))
         match msg.IndexOf(":"), msg.IndexOf("{") with
-        | i, j when i = 9 && j > 9 && j < i + 67    -> Some (msg.Substring(i + 1, j - i - 1))
+        | i, j when i = 9 && j > 9 && j < i + 67    -> MessageText.create (msg.Substring(i + 1, j - i - 1))
         | _                                         -> None
 
     let (|MessageNumber|_|) (msg:string) =
         match msg.IndexOf(":"), msg.IndexOf("{") with
-        | i, j when i = 9 && j > 9 && j < i + 67 -> Some (sprintf "%5s" (msg.Substring(j+1).Trim()))
+        | i, j when i = 9 && j > 9 && j < i + 67 -> MessageNumber.create (sprintf "%5s" (msg.Substring(j+1).Trim()))
         | _, _                                   -> None
 
 module PositionReportActivePatterns =

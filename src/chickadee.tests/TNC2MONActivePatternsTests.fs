@@ -6,6 +6,7 @@ open chickadee.core.DataFormats.PositionReportActivePatterns
 open chickadee.core.DataFormats
 open System
 open chickadee.core
+open chickadee.core.Message
 
 //TODO would this be a smarter way to do this? https://stackoverflow.com/questions/2671491/f-active-pattern-list-filter-or-equivalent?rq=1
 
@@ -155,19 +156,20 @@ let MessageParsingTests =
         testCase "Can parse addressee in good message data format" <| fun _ ->
             let result =
                 match "KG7SIO   :HELLO WORLD{12345" with
-                | MessageActivePatterns.Addressee a -> a
+                | MessageActivePatterns.Addressee a -> CallSign.value a
                 | _                                 -> String.Empty
             Expect.equal result "KG7SIO" "Addressee part was not parsed correctly"
+            //Expect.equal (MessageActivePatterns.Addressee "KG7SIO   :HELLO WORLD{12345") "KG7SIO" "Addressee part was not parsed correctly"
         testCase "Can parse message in good message data format" <| fun _ ->
             let result =
                 match "KG7SIO   :HELLO WORLD{12345" with
-                | MessageActivePatterns.Message m -> m
+                | MessageActivePatterns.Message m -> MessageText.value m
                 | _                               -> String.Empty
             Expect.equal result "HELLO WORLD" "Message part was not parsed correctly"
         testCase "Can parse message number in good message data format" <| fun _ ->
             let result =
                 match "KG7SIO   :HELLO WORLD{12345" with
-                | MessageActivePatterns.MessageNumber n -> n
+                | MessageActivePatterns.MessageNumber n -> MessageNumber.value n
                 | _                                     -> String.Empty
             Expect.equal result "12345" "Message Number part was not parsed correctly"
     ]
