@@ -15,19 +15,12 @@ let configSerilog (builder:ILoggingBuilder) =
     let config = builder.Services.BuildServiceProvider().GetService<IConfiguration>()
     let loggingConfig = new LoggerConfiguration()
     loggingConfig.ReadFrom.Configuration(config) |> ignore
-    //Should be done in the appsettings Loggin Sinks and AWS Serilog
-    //loggingConfig.MinimumLevel.Information |> ignore
-    //loggingConfig.MinimumLevel.Override("Microsoft", LogEventLevel.) |> ignore
-    //loggingConfig.Enrich.FromLogContext() |> ignore
-
-    //match config.["Logging:Sink"] with
-    ////| "RollingFile" -> loggingConfig.WriteTo.RollingFile("D:\logs\log-{Date}.txt") |> ignore//.CreateLogger();
-    //| "File" -> loggingConfig.WriteTo.File("D:\\log.log", rollingInterval = RollingInterval.Day) |> ignore
-    //| "Console" -> loggingConfig.WriteTo.Console() |> ignore
-    //| _ -> loggingConfig.WriteTo.Console() |> ignore
-
     builder.AddSerilog(loggingConfig.CreateLogger()) |> ignore
 
+let setupConfig (config:IConfiguration)  =
+    {
+        connectionString = config.["Database:Sqlite"]
+    }
 
 let endpointPipe = pipeline {
     plug head
@@ -45,7 +38,7 @@ let app = application {
     memory_cache
     use_static "static"
     use_gzip
-    use_config (fun _ -> {connectionString = "DataSource=..\..\database\database.sqlite;"} ) //TODO: Set development time configuration
+    use_config setupConfig
 }
 
 [<EntryPoint>]
