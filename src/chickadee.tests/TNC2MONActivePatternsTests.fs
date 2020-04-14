@@ -159,7 +159,6 @@ let MessageParsingTests =
                 | MessageActivePatterns.Addressee a -> CallSign.value a
                 | _                                 -> String.Empty
             Expect.equal result "KG7SIO" "Addressee part was not parsed correctly"
-            //Expect.equal (MessageActivePatterns.Addressee "KG7SIO   :HELLO WORLD{12345") "KG7SIO" "Addressee part was not parsed correctly"
         testCase "Can parse message in good message data format" <| fun _ ->
             let result =
                 match "KG7SIO   :HELLO WORLD{12345" with
