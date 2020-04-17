@@ -26,7 +26,7 @@ module TNC2MONRepository =
     open System.IO
     open chickadee.core
         
-    let mapPositionReport rpt =
+    let mapPositionReport rpt (rawType:TNC2MON.RawInformation) =
         let posResult =
             let posRec lat lon = 
                 {
@@ -48,12 +48,25 @@ module TNC2MONRepository =
             | Some c    -> PositionReportComment.create c
             | None      -> None //PositionReportComment.create String.Empty
 
+        let positionReport (p:PositionReport) =
+            match rawType with
+            | TNC2MON.RawInformation.PositionReportWithoutTimeStampOrUltimeter -> PositionReportWithoutTimeStampOrUltimeter p |> Ok
+            | TNC2MON.RawInformation.PositionReportWithTimestampNoMessaging -> PositionReportWithTimestampNoMessaging p |> Ok
+            | TNC2MON.RawInformation.PositionReportWithoutTimeStampWithMessaging -> PositionReportWithTimestampWithMessaging p |> Ok
+            | TNC2MON.RawInformation.PositionReportWithTimestampWithMessaging -> PositionReportWithTimestampWithMessaging p |> Ok
+            | _ -> Error "Type must be a position report."
+
+        //let informationReport (p:PositionReportType) =
+            
+
         match posResult with
         | Ok p ->   {
-                        Position = p
-                        Symbol = sym
-                        Comment = comment
-                    } |> PositionReportType.PositionReportWithoutTimeStamp |> TNC2MON.Information.PositionReport |> Ok
+                        Position    = p
+                        Symbol      = sym
+                        TimeStamp   = None
+                        Comment     = comment 
+                        //TODO is this right
+                    } |> positionReport |> Result.bind (fun p -> Ok (TNC2MON.Information.PositionReport p))  //PositionReport.PositionReportWithoutTimeStampWithMessaging
         | Error msg -> Error msg
 
     let mapMessage (msg:string) = //Can I do this recursivley
@@ -182,7 +195,7 @@ module TNC2MONRepository =
         let data (info:string) =
             match TNC2MON.getRawPaketType(info.Substring(0, 1)) with
             | TNC2MON.RawInformation.Message -> mapMessage (info.Substring 1)
-            | TNC2MON.RawInformation.PositionReportWithoutTimeStampWithMessaging -> mapPositionReport info //We have a lat/lon position report without timestamot. Let's try to parse it.
+            | TNC2MON.RawInformation.PositionReportWithoutTimeStampWithMessaging -> mapPositionReport info TNC2MON.RawInformation.PositionReportWithoutTimeStampWithMessaging //We have a lat/lon position report without timestamot. Let's try to parse it.
             | TNC2MON.RawInformation.UserDefined -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
                                                mapParticipantReport (info.Substring 1)
             | TNC2MON.RawInformation.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged

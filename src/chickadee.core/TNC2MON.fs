@@ -127,7 +127,11 @@ module TNC2MON =
                                            | MessageFormat.Message r -> r.ToString()
                                            | _ -> "NOT IMPLEMENTED"
             | PositionReport r          -> match r with
-                                           | PositionReportWithoutTimeStamp p -> p.ToString()
+                                           //| _ -> r.ToString()
+                                           | PositionReportType.PositionReportWithoutTimeStampOrUltimeter p     -> p.ToString()
+                                           | PositionReportType.PositionReportWithTimestampNoMessaging p        -> p.ToString()
+                                           | PositionReportType.PositionReportWithoutTimeStampWithMessaging p   -> p.ToString()
+                                           | PositionReportType.PositionReportWithTimestampWithMessaging p      -> p.ToString()
             | ParticipantStatusReport r -> r.ToString()
             | Unsupported u             -> u //This is where anything that cant be parsed will end up
 

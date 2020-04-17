@@ -28,6 +28,7 @@ let PACKET_POSITION_REPORT_HOUSE =
         } 
         Symbol = SymbolCode.House
         Comment = None //(PositionReportComment.create String.Empty).Value
+        TimeStamp = None
     }
 
 //TODO introduce property based testsing?
@@ -41,7 +42,7 @@ let TNC2MONFormatTests =
                     Sender      = (CallSign.create (SENDER.ToUpper())).Value
                     Destination = (CallSign.create (DESTINATION.ToUpper())).Value
                     Path        = WIDEnN WIDE11 //"WIDE1-1"
-                    Information = Some (PositionReportWithoutTimeStamp PACKET_POSITION_REPORT_HOUSE |> Information.PositionReport)
+                    Information = Some (PositionReportType.PositionReportWithoutTimeStampWithMessaging PACKET_POSITION_REPORT_HOUSE |> Information.PositionReport)
                 }.ToString()
             // Console.WriteLine packet
             Expect.equal packet TNC2_FINAL (sprintf "TNC2MON formats didnt match")
@@ -51,7 +52,7 @@ let TNC2MONFormatTests =
                     Sender      = (CallSign.create SENDER).Value
                     Destination = (CallSign.create DESTINATION).Value
                     Path        = WIDEnN WIDE11 //"WIDE1-1"
-                    Information = Some (PositionReportWithoutTimeStamp PACKET_POSITION_REPORT_HOUSE |> Information.PositionReport)
+                    Information = Some (PositionReportType.PositionReportWithoutTimeStampWithMessaging PACKET_POSITION_REPORT_HOUSE |> Information.PositionReport)
                 }.ToString()
             // Console.WriteLine packet
             Expect.equal packet TNC2_FINAL (sprintf "TNC2 formats didnt match")

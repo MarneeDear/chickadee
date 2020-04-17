@@ -62,5 +62,5 @@ module Timestamp =
     type TimeStamp = private TimeStamp of string
     module TimeStamp =
         let create (z:TimeZone) =
-            sprintf "%i%i%i%s" DateTime.Now.Day DateTime.Now.Hour DateTime.Now.Minute (z.ToString())
+            TimeStamp (sprintf "%i%i%i%s" DateTime.Now.Day DateTime.Now.Hour DateTime.Now.Minute (z.ToString()))
         let value (TimeStamp t) = t

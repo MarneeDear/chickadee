@@ -2,6 +2,7 @@
 
 module PositionReport =
     open System
+    open chickadee.core.Timestamp
 
     type PositionReportComment = private PositionReportComment of string
     module PositionReportComment =
@@ -102,27 +103,57 @@ module PositionReport =
             Latitude    : FormattedLatitude 
             Longitude   : FormattedLongitude
         }
+    
 
-    //TODO support more position report types -- data extensions
     (*
     APRS101.pdf Chapter 6: Time and Position Formats
     Must end in a Symbol Code
     Position coordinates are a combination of latitude and longitude, separated
     by a display Symbol Table Identifier, and followed by a Symbol Code. 
+
+    PositionReport WithoutTimeStamp OrUltimeter
+    PositionReportWithoutTimeStampOrUltimeter
+
+    PositionReport WithTimestamp    NoMessaging
+    PositionReportWithTimestampNoMessaging
+
+    PositionReport WithoutTimeStamp WithMessaging
+    PositionReportWithoutTimeStampWithMessaging
+
+    PositionReport WithTimestamp    WithMessaging
+    PositionReportWithTimestampWithMessaging
+
     *)
-    type PositionReportWithoutTimeStamp =
+    type PositionReport =
         {
-            Position    : Position
-            Symbol      : SymbolCode
-            Comment     : PositionReportComment option
+            Position  : Position
+            Symbol    : SymbolCode
+            TimeStamp : TimeStamp option
+            Comment   : PositionReportComment option
         }
+
+    //type PositionReportWithoutTimeStamp =
+    //    {
+    //        Position    : Position
+    //        Symbol      : SymbolCode
+    //        Comment     : PositionReportComment option
+    //    }
+        //TODO add timestamp
         override this.ToString() =
             let comment =
                 match this.Comment with
                 | Some c    -> PositionReportComment.value c
                 | None      -> String.Empty
+            let timestamp =
+                match this.TimeStamp with
+                | Some t -> ""
+                | None -> String.Empty
             sprintf "=%s/%s%c%s" (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) (this.Symbol.ToChar()) comment
     
 
     type PositionReportType =
-        | PositionReportWithoutTimeStamp of PositionReportWithoutTimeStamp
+        | PositionReportWithoutTimeStampOrUltimeter of PositionReport
+        | PositionReportWithTimestampNoMessaging of PositionReport
+        | PositionReportWithoutTimeStampWithMessaging of PositionReport
+        | PositionReportWithTimestampWithMessaging of PositionReport
+

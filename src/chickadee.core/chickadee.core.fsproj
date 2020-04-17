@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Timestamp.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Common.fs" />
     <Compile Include="PositionReport.fs" />

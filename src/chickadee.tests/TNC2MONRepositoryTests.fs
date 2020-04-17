@@ -41,6 +41,7 @@ let PACKET_POSITION_REPORT_HOUSE =
         } 
         Symbol = SymbolCode.House
         Comment = None //(PositionReportComment.create String.Empty).Value
+        TimeStamp = None
     }
 
 let PACKET = 
@@ -48,7 +49,7 @@ let PACKET =
         Sender      = (CallSign.create (SENDER.ToUpper())).Value
         Destination = (CallSign.create (DESTINATION.ToUpper())).Value
         Path        = WIDEnN WIDE11 //"WIDE1-1"
-        Information = Some (PositionReportWithoutTimeStamp PACKET_POSITION_REPORT_HOUSE |> Information.PositionReport)
+        Information = Some (PositionReportWithTimestampNoMessaging PACKET_POSITION_REPORT_HOUSE |> Information.PositionReport)
     }
 
 [<Tests>]

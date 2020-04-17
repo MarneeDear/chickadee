@@ -42,7 +42,7 @@ module Console =
 
 module Main =
 
-    let composePositionReportMessage (pRpt: ParseResults<PositionReportArguments>) : PositionReport.PositionReportWithoutTimeStamp = 
+    let composePositionReportMessage (pRpt: ParseResults<PositionReportArguments>) : PositionReport.PositionReport = 
         let latArgu = pRpt.GetResult(CommandArguments.Latitude)
         let lonArgu = pRpt.GetResult(CommandArguments.Longitude)
         let lat     = PositionReport.FormattedLatitude.create latArgu
@@ -52,6 +52,7 @@ module Main =
         { 
             Position = { Latitude = lat; Longitude = lon }
             Symbol = (if symbol.IsSome then symbol.Value else SymbolCode.House)
+            TimeStamp = Some (chickadee.core.Timestamp.TimeStamp.create chickadee.core.Timestamp.TimeZone.Local)
             Comment = PositionReport.PositionReportComment.create comment
         }
 
@@ -101,8 +102,12 @@ module Main =
             let information =
                 match pRpt, msg with
                 | Some _, Some _        -> failwith "Cannot use both Position Report and Custom Message at the same time."
-                | Some rptArgs, None    -> (composePositionReportMessage rptArgs) |> PositionReport.PositionReportType.PositionReportWithoutTimeStamp |> Information.PositionReport  
-                | None _, Some msg      -> (composeMessage msg) |> Message.MessageFormat.Message |> Information.Message //Unformatted (UnformattedMessage.create msg)
+                | Some rptArgs, None    -> (composePositionReportMessage rptArgs) 
+                                           |> PositionReport.PositionReportType.PositionReportWithoutTimeStampWithMessaging //todo support all types
+                                           |> Information.PositionReport  
+                | None _, Some msg      -> (composeMessage msg) 
+                                           |> Message.MessageFormat.Message 
+                                           |> Information.Message //Unformatted (UnformattedMessage.create msg)
                 | None, None            -> failwith "Must provide a position report or a message."
             
             let senderCallSign = 
