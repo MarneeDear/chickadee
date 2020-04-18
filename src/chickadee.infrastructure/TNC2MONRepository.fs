@@ -6,6 +6,7 @@ open chickadee.core.DataFormats.MessageActivePatterns
 open chickadee.core.DataFormats.PositionReportActivePatterns
 open chickadee.core.TNC2MonActivePatterns
 open chickadee.core.Participant
+open chickadee.core.DataFormats.DataFormatType
 
 //TODO Kiss settings
 (*
@@ -26,7 +27,7 @@ module TNC2MONRepository =
     open System.IO
     open chickadee.core
         
-    let mapPositionReport rpt (rawType:TNC2MON.RawInformation) =
+    let mapPositionReport rpt (rawType:APRSDataFormats.DataFormat) =
         let posResult =
             let posRec lat lon = 
                 {
@@ -43,21 +44,17 @@ module TNC2MONRepository =
             | Some s    -> s //Defaults to house if no match found -- TODO do I want to do this?
             | None      -> Common.SymbolCode.House
         let comment = //TODO handle the case where the comment is not accepted length
-            //let c =
             match (|Comment|_|) (sym.ToChar()) rpt with
             | Some c    -> PositionReportComment.create c
             | None      -> None //PositionReportComment.create String.Empty
 
         let positionReport (p:PositionReport) =
             match rawType with
-            | TNC2MON.RawInformation.PositionReportWithoutTimeStampOrUltimeter -> PositionReportWithoutTimeStampOrUltimeter p |> Ok
-            | TNC2MON.RawInformation.PositionReportWithTimestampNoMessaging -> PositionReportWithTimestampNoMessaging p |> Ok
-            | TNC2MON.RawInformation.PositionReportWithoutTimeStampWithMessaging -> PositionReportWithTimestampWithMessaging p |> Ok
-            | TNC2MON.RawInformation.PositionReportWithTimestampWithMessaging -> PositionReportWithTimestampWithMessaging p |> Ok
+            | APRSDataFormats.DataFormat.PositionReportWithoutTimeStampOrUltimeter    -> PositionReportWithoutTimeStampOrUltimeter p |> Ok
+            | APRSDataFormats.DataFormat.PositionReportWithTimestampNoMessaging       -> PositionReportWithTimestampNoMessaging p |> Ok
+            | APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging  -> PositionReportWithTimestampWithMessaging p |> Ok
+            | APRSDataFormats.DataFormat.PositionReportWithTimestampWithMessaging     -> PositionReportWithTimestampWithMessaging p |> Ok
             | _ -> Error "Type must be a position report."
-
-        //let informationReport (p:PositionReportType) =
-            
 
         match posResult with
         | Ok p ->   {
@@ -76,21 +73,6 @@ module TNC2MONRepository =
                                         MessageText = m
                                         MessageNumber = n
                                      } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
-                                //match (CallSign.create a), (MessageText.create m) with
-                                //| Some c, Some m -> {
-                                //                        Addressee = c
-                                //                        MessageText = m
-                                //                        MessageNumber = MessageNumber.create n
-                                //                     } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
-                                //| 
-                                //match CallSign.create a with
-                                //| Some c -> {
-                                //                Addressee = c
-                                //                MessageText = MessageText.create m
-                                //                MessageNumber = MessageNumber.create n
-                                //            } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
-                                //| None -> Error "Addressee call sign not in expected format."
-        //| _, _, _ -> [(a, "Addressee"; (m, "Message"); (n, "Message Number")] > List.fold (fun acc elem -> partMsg elem acc)
         | None, Some _, Some _ -> Error "Addressee part of message not in expected format."
         | Some _, None, Some _ -> Error "Message part of message not in expected format."
         | Some _, Some _, None -> Error "Message Number part of message not in expected format."
@@ -181,24 +163,15 @@ module TNC2MONRepository =
             match (|Information|_|) frame with
             | Some m    -> m |> Ok
             | None      -> "No information part found." |> Error
-            
-            //| id when id.Equals("=") -> mapPositionReport info //(info.Substring 1) //We have a lat/lon position report without timestamot. Let's try to parse it.
-            //| id when id.Equals(":") -> mapMessage (info.Substring 1) //|> Ok //we have Message data type. Lets try to parse it
-            //| id when id.Equals("{") -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
-            //                            mapParticipantReport (info.Substring 1)
-            //                            //let pRpt = (mapParticipantReport (msg.Substring 1))
-            //                            //match pRpt with
-            //                            //| Some r -> Ok r
-            //                            //| None -> Error "Participant report not in expected format"
-            //| _                      -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
 
         let data (info:string) =
-            match TNC2MON.getRawPaketType(info.Substring(0, 1)) with
-            | TNC2MON.RawInformation.Message -> mapMessage (info.Substring 1)
-            | TNC2MON.RawInformation.PositionReportWithoutTimeStampWithMessaging -> mapPositionReport info TNC2MON.RawInformation.PositionReportWithoutTimeStampWithMessaging //We have a lat/lon position report without timestamot. Let's try to parse it.
-            | TNC2MON.RawInformation.UserDefined -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
+            //match TNC2MON.getRawPaketType(info.Substring(0, 1)) with
+            match (|FormatType|_|) info with
+            | Some APRSDataFormats.DataFormat.Message -> mapMessage (info.Substring 1)
+            | Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging -> mapPositionReport info APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging //We have a lat/lon position report without timestamot. Let's try to parse it.
+            | Some APRSDataFormats.DataFormat.UserDefined -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
                                                mapParticipantReport (info.Substring 1)
-            | TNC2MON.RawInformation.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
+            | Some APRSDataFormats.DataFormat.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
             | _ -> mapUnsupportedMessage(info.Substring 1) |> Ok
 
         frame record
@@ -211,10 +184,10 @@ module TNC2MONRepository =
             | Some f    -> f |> Ok
             | None      -> "Frame not in expected format." |> Error
         
-        let information frame =
-            match (|Information|_|) frame with
-            | Some i    -> i |> Ok
-            | None      -> "No information part found." |> Error
+        //let information frame =
+        //    match (|Information|_|) frame with
+        //    | Some i    -> i |> Ok
+        //    | None      -> "No information part found." |> Error
 
         let address frame =
             match (|Address|_|) frame with

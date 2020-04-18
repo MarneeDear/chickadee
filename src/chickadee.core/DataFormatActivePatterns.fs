@@ -4,6 +4,34 @@ open System
 open chickadee.core.Message
 open chickadee.core
 
+module DataFormatType =
+    let (|FormatType|_|) (info:string) =
+        match info.Substring(0,1) with
+        | "\x1C" -> Some APRSDataFormats.DataFormat.CurrentMicEData
+        | "\x1D" -> Some APRSDataFormats.DataFormat.OldMicEData
+        | "!" -> Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampOrUltimeter
+        | "#" -> Some APRSDataFormats.DataFormat.PeetBrosWeatherStation
+        | "$" -> Some APRSDataFormats.DataFormat.RawGPSDataOrUltimeter
+        | "%" -> Some APRSDataFormats.DataFormat.Argelo
+        | "'" -> Some APRSDataFormats.DataFormat.OldMicEButCurrentTMD700
+        | ")" -> Some APRSDataFormats.DataFormat.Item
+        | "*" -> Some APRSDataFormats.DataFormat.PeetBrosWeatherStation
+        | "+" -> Some APRSDataFormats.DataFormat.ShelterDataWithTime
+        | "," -> Some APRSDataFormats.DataFormat.InvalidOrTest
+        | "/" -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampNoMessaging
+        | ":" -> Some APRSDataFormats.DataFormat.Message
+        | ";" -> Some APRSDataFormats.DataFormat.Object
+        | "<" -> Some APRSDataFormats.DataFormat.StationCapabilities
+        | "=" -> Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging
+        | ">" -> Some APRSDataFormats.DataFormat.StatusReport
+        | "?" -> Some APRSDataFormats.DataFormat.Query
+        | "@" -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampWithMessaging
+        | "T" -> Some APRSDataFormats.DataFormat.TelemetryReport
+        | "[" -> Some APRSDataFormats.DataFormat.MaidenheadGridLocatorBeacon
+        | "{" -> Some APRSDataFormats.DataFormat.UserDefined
+        | "}" -> Some APRSDataFormats.DataFormat.ThirdPartyTraffic        
+        | _   -> Some APRSDataFormats.DataFormat.Unsupported
+
 module MessageActivePatterns =
 
     //Part of the message data type
@@ -20,8 +48,7 @@ module MessageActivePatterns =
         | true  -> CallSign.create (msg.Substring(0,9).Trim())
         | false -> None
 
-    let (|Message|_|) (msg:string) = //msg.Substring(10, j - 10)
-        //&& not (m.Contains("|")) && not (m.Contains("~"))
+    let (|Message|_|) (msg:string) = 
         match msg.IndexOf(":"), msg.IndexOf("{") with
         | i, j when i = 9 && j > 9 && j < i + 67    -> MessageText.create (msg.Substring(i + 1, j - i - 1))
         | _                                         -> None
@@ -46,19 +73,6 @@ module PositionReportActivePatterns =
         | false, true   -> Some lat
         | _             -> None
 
-        //let parseLatitude (posRpt:string) =
-        //    let lat = posRpt.Substring(1, 8)
-        //    match lat.EndsWith("N"), lat.EndsWith("S") with
-        //    | true, false   -> Some lat
-        //    | false, true   -> Some lat
-        //    | _             -> None
-        //match getAPRSDataTypeIdentifier (msg.Substring(0,1)) with //TODO we dont need to do this here. We already know what we have or we should?
-        //| Some id   ->  match id with
-        //                | PositionReportWithoutTimeStampWithMessaging   -> (parseLatitude msg)
-        //                | PositionReportWithoutTimeStampNoMessaging     -> (parseLatitude msg)
-        //                | _                                             -> None
-        // | None     -> None //We do not have a position report and therefore no latitude
-
     //Only supports Lat/Long Position Report Format — without Timestamp
     //See APRS 1.01 spec, section 8 POSITION AND DF REPORT DATA FORMATS
     //TODO According to APRS spec the Longitude is 9 chars fixed-length. Can just use the length to parse.
@@ -81,7 +95,7 @@ module PositionReportActivePatterns =
     let (|Symbol|_|) (msg:string) =
         //TODO check that the previous char was a W or E meaning that it was probably and APRS lat/lon
         match msg.Substring(18,1) with
-        | "W" -> SymbolCode.fromSymbol (msg.Substring(19,1).ToCharArray().[0]) //  getSymbolCode (msg.Substring(19,1).ToCharArray().[0])
+        | "W" -> SymbolCode.fromSymbol (msg.Substring(19,1).ToCharArray().[0]) 
         | "E" -> SymbolCode.fromSymbol (msg.Substring(19,1).ToCharArray().[0])
         | _ -> None
 
@@ -90,12 +104,4 @@ module PositionReportActivePatterns =
         match String.IsNullOrEmpty(comment) with
         | true -> None
         | false -> Some comment
-        //if comment = 
-        //    String.Empty 
-        //then    
-        //    None 
-        //else 
-        //    Some comment
-
-
 

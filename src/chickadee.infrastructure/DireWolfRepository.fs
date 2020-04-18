@@ -2,6 +2,7 @@
 
 open chickadee.core
 open chickadee.core.TNC2MonActivePatterns
+open chickadee.core.DataFormats.DataFormatType
 open chickadee.infrastructure.database
 open System
 open System.IO
@@ -136,8 +137,11 @@ module KissUtil =
 
     let private informationType frame =
         match (|Information|_|) frame with
-        | Some i    -> TNC2MON.getRawPaketType(i.Substring(0, 1)).ToString()
-        | None      -> "No information part found."
+        | Some i    -> //TNC2MON.getRawPaketType(i.Substring(0, 1)).ToString()
+                        match (|FormatType|_|) i with
+                        | Some t -> t.ToString() |> Ok
+                        | None -> APRSDataFormats.DataFormat.Unsupported.ToString() |> Ok                    
+        | None      -> "No information part found." |> Error
 
     let private getRecords path (file: string option) =
             let d = new DirectoryInfo(path);//Assuming Test is your Folder
@@ -153,11 +157,11 @@ module KissUtil =
             | None -> getRecords path None
             | Some f -> getRecords path (Some f)
 
-        let mapToRawFrameRecord error (frame:string)  =
+        let mapToRawFrameRecord error (frame:string) (packet_type:string)  =
             {
                 date_created = String.Empty
                 raw_packet = frame
-                packet_type = informationType frame
+                packet_type = packet_type 
                 error = error
             }
         let doSave frame =
@@ -166,8 +170,10 @@ module KissUtil =
             }           
         let saveFrame rcrd = 
             match (|Frame|_|) rcrd with
-            | Some f -> f |> (mapToRawFrameRecord String.Empty) |> (fun f -> (doSave f).Result)
-            | None   -> mapToRawFrameRecord rcrd "Record not in expected format." |> (fun f -> (doSave f).Result)
+            | Some f -> match informationType f with
+                        | Ok t -> mapToRawFrameRecord String.Empty f t |> (fun p -> (doSave p).Result)
+                        | Error msg -> mapToRawFrameRecord msg f msg |> (fun f -> (doSave f).Result)
+            | None   -> mapToRawFrameRecord rcrd "Record not in expected format." "Record not in expected format." |> (fun f -> (doSave f).Result)
  
         rcrds |> Array.map saveFrame
 

@@ -23,41 +23,18 @@ module TNC2MonActivePatterns =
         | true  -> None
         | false -> Some (address.Substring(0, address.IndexOf(">")))
 
-                //if frame.IndexOf(":") < 1 then 
-        //    None
-        //else
-        //    Some (frame.Substring(0, frame.IndexOf(":")))
-
-
-        //if address.IndexOf(">") < 1 then None
-        //else Some (address.Substring(0, address.IndexOf(">")))
-
     let (|Destination|_|) (address:string) =
         match address.IndexOf(">") < 1 || address.IndexOf(",") < 1 with
         | true  -> None
         | false -> Some (address.Substring(address.IndexOf(">") + 1, address.IndexOf(",") - address.IndexOf(">") - 1))
-
-        //if address.IndexOf(">") < 1 || address.IndexOf(",") < 1 then None
-        //else Some (address.Substring(address.IndexOf(">") + 1, address.IndexOf(",") - address.IndexOf(">") - 1))
 
     //Returns a list of the paths if parsed
     let (|Path|_|) (address:string) =
         match not (address.IndexOf(">") = -1) && address.IndexOf(",") > address.IndexOf(">") with
         | true  -> Some (address.Substring(address.IndexOf(",") + 1).Split(','))
         | false -> None
-        //if not (address.IndexOf(">") = -1) && address.IndexOf(",") > address.IndexOf(">") then
-        //    Some (address.Substring(address.IndexOf(",") + 1).Split(','))
-        //else
-        //    None
 
     let (|Information|_|) (frame:string) =
         match frame.IndexOf(":") < 1 with
         | true  -> None
         | false -> Some (frame.Substring(frame.IndexOf(":") + 1))
-
-        //if frame.IndexOf(":") < 1 then 
-        //    None
-        //else
-        //    Some (frame.Substring(frame.IndexOf(":") + 1))
-
-    

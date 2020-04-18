@@ -10,6 +10,7 @@
     <Compile Include="PositionReport.fs" />
     <Compile Include="Message.fs" />
     <Compile Include="ParticipantStatus.fs" />
+    <Compile Include="APRSDataFormats.fs" />
     <Compile Include="TNC2MONActivePatterns.fs" />
     <Compile Include="DataFormatActivePatterns.fs" />
     <Compile Include="TNC2MON.fs" />
