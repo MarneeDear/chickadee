@@ -36,10 +36,10 @@ module TNC2MON =
     open Message
 
     type Information =
-        | Message                           of MessageFormat
-        | PositionReport                    of PositionReportType //PositionReportWithoutTimeStamp
-        | ParticipantStatusReport           of Participant.ParticipantStatusReport
-        | Unsupported                       of string
+        | Message                 of MessageFormat
+        | PositionReport          of PositionReportType //PositionReportWithoutTimeStamp
+        | ParticipantStatusReport of Participant.ParticipantStatusReport
+        | Unsupported             of string
         override this.ToString() =
             match this with 
             | Message m                 -> match m with

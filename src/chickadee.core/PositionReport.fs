@@ -100,8 +100,8 @@ module PositionReport =
 
     type Position =
         {
-            Latitude    : FormattedLatitude 
-            Longitude   : FormattedLongitude
+            Latitude  : FormattedLatitude 
+            Longitude : FormattedLongitude
         }
     
 
@@ -132,12 +132,6 @@ module PositionReport =
             Comment   : PositionReportComment option
         }
 
-    //type PositionReportWithoutTimeStamp =
-    //    {
-    //        Position    : Position
-    //        Symbol      : SymbolCode
-    //        Comment     : PositionReportComment option
-    //    }
         //TODO add timestamp
         override this.ToString() =
             let comment =
