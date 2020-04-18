@@ -116,5 +116,5 @@ let RawPacketTypeTests =
         testCase "} is Third Party" <| fun _ ->
             Expect.equal ((|FormatType|_|) "} blahblah").Value ThirdPartyTraffic "ThirdPartyTraffic"
         testCase "Unsupported character" <| fun _ ->
-            Expect.equal ((|FormatType|_|) "N blahblah").Value Unsupported "TelemetryReport"
+            Expect.equal ((|FormatType|_|) "N blahblah").Value Unsupported "Unsupported"
     ]
