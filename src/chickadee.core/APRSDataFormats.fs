@@ -11,6 +11,14 @@ determines the format of the remainder of the data in the Information field, as
 follows:
 APRS Data
 
+5 APRS DATA IN THE AX.25 INFORMATION FIELD
+APRS Data Type
+Identifier
+Every APRS packet contains an APRS Data Type Identifier (DTI). This
+determines the format of the remainder of the data in the Information field, as
+follows:
+APRS Data Type Identifiers
+
 *)
 
 module APRSDataFormats =
@@ -68,3 +76,30 @@ module APRSDataFormats =
             | UserDefined                                   -> "User Defined"
             | ThirdPartyTraffic                             -> "Third-party traffic"
             | Unsupported                                   -> "Unsupported"
+        static member dataIdentifier (df) =
+            match df with
+            | CurrentMicEData                               -> "\x1C"
+            | OldMicEData                                   -> "\x1D"
+            | PositionReportWithoutTimeStampOrUltimeter     -> "!"
+            | PeetBrosWeatherStation                        -> "#"
+            | RawGPSDataOrUltimeter                         -> "$"
+            | Argelo                                        -> "%"
+            | OldMicEButCurrentTMD700                       -> "'"
+            | Item                                          -> ")"
+            | ShelterDataWithTime                           -> "+"
+            | InvalidOrTest                                 -> "," 
+            | PositionReportWithTimestampNoMessaging        -> "/"
+            | Message                                       -> ":"
+            | Object                                        -> ";"
+            | StationCapabilities                           -> "<"
+            | PositionReportWithoutTimeStampWithMessaging   -> "="
+            | StatusReport                                  -> ">"
+            | Query                                         -> "?"
+            | PositionReportWithTimestampWithMessaging      -> "@"
+            | TelemetryReport                               -> "T"
+            | MaidenheadGridLocatorBeacon                   -> "["
+            | WeatherReportWihtoutPosition                  -> "_"
+            | CurrentMicEDataNotUsedInTMD700                -> "`"
+            | UserDefined                                   -> "{"
+            | ThirdPartyTraffic                             -> "}"
+            | Unsupported                                   -> ""

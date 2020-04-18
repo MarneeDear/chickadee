@@ -28,6 +28,8 @@ module DataFormatType =
         | "@" -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampWithMessaging
         | "T" -> Some APRSDataFormats.DataFormat.TelemetryReport
         | "[" -> Some APRSDataFormats.DataFormat.MaidenheadGridLocatorBeacon
+        | "_" -> Some APRSDataFormats.DataFormat.WeatherReportWihtoutPosition
+        | "`" -> Some APRSDataFormats.DataFormat.CurrentMicEDataNotUsedInTMD700
         | "{" -> Some APRSDataFormats.DataFormat.UserDefined
         | "}" -> Some APRSDataFormats.DataFormat.ThirdPartyTraffic        
         | _   -> Some APRSDataFormats.DataFormat.Unsupported
