@@ -137,8 +137,7 @@ module KissUtil =
 
     let private informationType frame =
         match (|Information|_|) frame with
-        | Some i    -> //TNC2MON.getRawPaketType(i.Substring(0, 1)).ToString()
-                        match (|FormatType|_|) i with
+        | Some i    ->  match (|FormatType|_|) i with
                         | Some t -> t.ToString() |> Ok
                         | None -> APRSDataFormats.DataFormat.Unsupported.ToString() |> Ok                    
         | None      -> "No information part found." |> Error

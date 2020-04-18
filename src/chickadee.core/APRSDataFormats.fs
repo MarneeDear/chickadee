@@ -55,32 +55,3 @@ module APRSDataFormats =
             | UserDefined                                   -> "User Defined"
             | ThirdPartyTraffic                             -> "Third-party traffic"
             | Unsupported                                   -> "Unsupported"
-
-    //let getRawPaketType id =
-    //    match id with
-    //    | "\u1c" -> CurrentMicEData
-    //    | "\u1d" -> OldMicEData
-    //    | "!" -> PositionReportWithoutTimeStampOrUltimeter
-    //    | "#" -> PeetBrosWeatherStation
-    //    | "$" -> RawGPSDataOrUltimeter
-    //    | "%" -> Argelo
-    //    | "'" -> OldMicEButCurrentTMD700
-    //    | ")" -> Item
-    //    | "*" -> PeetBrosWeatherStation
-    //    | "+" -> ShelterDataWithTime
-    //    | "," -> InvalidOrTest
-    //    | "/" -> PositionReportWithTimestampNoMessaging
-    //    | ":" -> Message
-    //    | ";" -> Object
-    //    | "<" -> StationCapabilities
-    //    | "=" -> PositionReportWithoutTimeStampWithMessaging
-    //    | ">" -> StatusReport
-    //    | "?" -> Query
-    //    | "@" -> PositionReportWithTimestampWithMessaging
-    //    | "T" -> TelemetryReport
-    //    | "[" -> MaidenheadGridLocatorBeacon
-    //    | "{" -> UserDefined
-    //    | "}" -> ThirdPartyTraffic        
-    //    | _   -> Unsupported
-
-
