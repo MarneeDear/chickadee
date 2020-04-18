@@ -65,7 +65,7 @@ module Message =
             MessageNumber   : MessageNumber
         }
         override this.ToString() =
-            sprintf ":%s:%s{%s" (CallSign.value this.Addressee) (MessageText.value this.MessageText) (MessageNumber.value this.MessageNumber)
+            sprintf ":%-9s:%s{%s" (CallSign.value this.Addressee) (MessageText.value this.MessageText) (MessageNumber.value this.MessageNumber)
 
     (*
     Message Acknowledgement
@@ -84,9 +84,11 @@ module Message =
     *)
     type MessageAcknowledgement =
         {
-            Addresse : CallSign
+            Addressee : CallSign
             MessageNumber : MessageNumber
         }
+        override this.ToString() =
+            sprintf ":%-s:ack:%s" (CallSign.value this.Addressee) (MessageNumber.value this.MessageNumber)
 
     (*
     Message Rejection If a station is unable to accept a message, it can send a rej message instead
@@ -104,6 +106,8 @@ module Message =
             Addressee : CallSign
             MessageNumber : MessageNumber
         }
+        override this.ToString() =
+            sprintf ":%-s:rej:%s" (CallSign.value this.Addressee) (MessageNumber.value this.MessageNumber)
 
     (*
     General Bulletins 
@@ -131,6 +135,8 @@ module Message =
             BulletinId : MessageID
             BulletinText : MessageText
         }
+        override this.ToString() =
+            sprintf ":BLN%i%5s:%s" (MessageID.value this.BulletinId) System.String.Empty (MessageText.value this.BulletinText)
 
     (*
     Announcements 
@@ -144,7 +150,7 @@ module Message =
     Users should be alerted on arrival of a new bulletin or announcement.
     
     | : | BLN | Announcement Id | _____ | : | Announcement Text |
-    | 1 |  3  |        1        |    5  | 1 |     0-67          |
+    | 1 |  3  |        1        |   5   | 1 |     0-67          |
 
     Example
     :BLNQ_____:Mt St Helen digi will be QRT this weekend
@@ -156,6 +162,8 @@ module Message =
             AnnouncementId : MessageID
             AnnouncementText : MessageText
         }
+        override this.ToString() =
+            sprintf ":BLN%i%5s:%s" (MessageID.value this.AnnouncementId) System.String.Empty (MessageText.value this.AnnouncementText)
 
     type MessageFormat =
         | Message of Message
