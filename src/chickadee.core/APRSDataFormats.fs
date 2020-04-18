@@ -1,5 +1,18 @@
 ﻿namespace chickadee.core
 
+(*
+APRS 101
+5 APRS DATA IN THE AX.25 INFORMATION FIELD
+
+APRS Data Type
+Identifier
+Every APRS packet contains an APRS Data Type Identifier (DTI). This
+determines the format of the remainder of the data in the Information field, as
+follows:
+APRS Data
+
+*)
+
 module APRSDataFormats =
 
     type DataFormat =
