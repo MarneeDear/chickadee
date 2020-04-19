@@ -7,10 +7,10 @@
     <Compile Include="Timestamp.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Common.fs" />
+    <Compile Include="APRSDataFormats.fs" />
     <Compile Include="PositionReport.fs" />
     <Compile Include="Message.fs" />
     <Compile Include="ParticipantStatus.fs" />
-    <Compile Include="APRSDataFormats.fs" />
     <Compile Include="TNC2MONActivePatterns.fs" />
     <Compile Include="DataFormatActivePatterns.fs" />
     <Compile Include="TNC2MON.fs" />

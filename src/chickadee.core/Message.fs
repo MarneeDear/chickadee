@@ -171,3 +171,10 @@ module Message =
         | MessageRejection of MessageRejection
         | Bulletin of Bulletin
         | Announcement of Announcement
+        override this.ToString() =
+            match this with
+            | Message m -> m.ToString()
+            | MessageAcknowledgement m -> m.ToString()
+            | MessageRejection m -> m.ToString()
+            | Bulletin m -> m.ToString()
+            | Announcement m -> m.ToString()

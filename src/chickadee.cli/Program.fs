@@ -103,7 +103,7 @@ module Main =
                 match pRpt, msg with
                 | Some _, Some _        -> failwith "Cannot use both Position Report and Custom Message at the same time."
                 | Some rptArgs, None    -> (composePositionReportMessage rptArgs) 
-                                           |> PositionReport.PositionReportType.PositionReportWithoutTimeStampWithMessaging //todo support all types
+                                           |> PositionReport.PositionReportFormat.PositionReportWithoutTimeStampWithMessaging //todo support all types
                                            |> Information.PositionReport  
                 | None _, Some msg      -> (composeMessage msg) 
                                            |> Message.MessageFormat.Message 

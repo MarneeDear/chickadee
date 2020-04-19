@@ -9,30 +9,30 @@ module DataFormatType =
         match info.Substring(0,1) with
         | "\x1C" -> Some APRSDataFormats.DataFormat.CurrentMicEData
         | "\x1D" -> Some APRSDataFormats.DataFormat.OldMicEData
-        | "!" -> Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampOrUltimeter
-        | "#" -> Some APRSDataFormats.DataFormat.PeetBrosWeatherStation
-        | "$" -> Some APRSDataFormats.DataFormat.RawGPSDataOrUltimeter
-        | "%" -> Some APRSDataFormats.DataFormat.Argelo
-        | "'" -> Some APRSDataFormats.DataFormat.OldMicEButCurrentTMD700
-        | ")" -> Some APRSDataFormats.DataFormat.Item
-        | "*" -> Some APRSDataFormats.DataFormat.PeetBrosWeatherStation
-        | "+" -> Some APRSDataFormats.DataFormat.ShelterDataWithTime
-        | "," -> Some APRSDataFormats.DataFormat.InvalidOrTest
-        | "/" -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampNoMessaging
-        | ":" -> Some APRSDataFormats.DataFormat.Message
-        | ";" -> Some APRSDataFormats.DataFormat.Object
-        | "<" -> Some APRSDataFormats.DataFormat.StationCapabilities
-        | "=" -> Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging
-        | ">" -> Some APRSDataFormats.DataFormat.StatusReport
-        | "?" -> Some APRSDataFormats.DataFormat.Query
-        | "@" -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampWithMessaging
-        | "T" -> Some APRSDataFormats.DataFormat.TelemetryReport
-        | "[" -> Some APRSDataFormats.DataFormat.MaidenheadGridLocatorBeacon
-        | "_" -> Some APRSDataFormats.DataFormat.WeatherReportWihtoutPosition
-        | "`" -> Some APRSDataFormats.DataFormat.CurrentMicEDataNotUsedInTMD700
-        | "{" -> Some APRSDataFormats.DataFormat.UserDefined
-        | "}" -> Some APRSDataFormats.DataFormat.ThirdPartyTraffic        
-        | _   -> Some APRSDataFormats.DataFormat.Unsupported
+        | "!"    -> Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampOrUltimeter
+        | "#"    -> Some APRSDataFormats.DataFormat.PeetBrosWeatherStation
+        | "$"    -> Some APRSDataFormats.DataFormat.RawGPSDataOrUltimeter
+        | "%"    -> Some APRSDataFormats.DataFormat.Argelo
+        | "'"    -> Some APRSDataFormats.DataFormat.OldMicEButCurrentTMD700
+        | ")"    -> Some APRSDataFormats.DataFormat.Item
+        | "*"    -> Some APRSDataFormats.DataFormat.PeetBrosWeatherStation
+        | "+"    -> Some APRSDataFormats.DataFormat.ShelterDataWithTime
+        | ","    -> Some APRSDataFormats.DataFormat.InvalidOrTest
+        | "/"    -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampNoMessaging
+        | ":"    -> Some APRSDataFormats.DataFormat.Message
+        | ";"    -> Some APRSDataFormats.DataFormat.Object
+        | "<"    -> Some APRSDataFormats.DataFormat.StationCapabilities
+        | "="    -> Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging
+        | ">"    -> Some APRSDataFormats.DataFormat.StatusReport
+        | "?"    -> Some APRSDataFormats.DataFormat.Query
+        | "@"    -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampWithMessaging
+        | "T"    -> Some APRSDataFormats.DataFormat.TelemetryReport
+        | "["    -> Some APRSDataFormats.DataFormat.MaidenheadGridLocatorBeacon
+        | "_"    -> Some APRSDataFormats.DataFormat.WeatherReportWihtoutPosition
+        | "`"    -> Some APRSDataFormats.DataFormat.CurrentMicEDataNotUsedInTMD700
+        | "{"    -> Some APRSDataFormats.DataFormat.UserDefined
+        | "}"    -> Some APRSDataFormats.DataFormat.ThirdPartyTraffic        
+        | _      -> Some APRSDataFormats.DataFormat.Unsupported
 
 module MessageActivePatterns =
 
