@@ -17,8 +17,8 @@ let LATITUDE = 36.0591117 //DD decimal degrees
 let LONGITUDE = -112.1093343 //DD decimal degrees
 let LONGITUDE_HEMISPHERE = East // 'E'
 let LATITUDE_HEMISPHERE =  North // 'N'
-let POSITION_REPORT_HOUSE = sprintf "=%.2f%c/%.2f%c-" LATITUDE (LATITUDE_HEMISPHERE.ToHemisphereChar()) LONGITUDE (LONGITUDE_HEMISPHERE.ToHemisphereChar())
-let FINAL_POSITION_REPORT = "=3603.33N/11206.34W-"
+let POSITION_REPORT_HOUSE = sprintf "!%.2f%c/%.2f%c-" LATITUDE (LATITUDE_HEMISPHERE.ToHemisphereChar()) LONGITUDE (LONGITUDE_HEMISPHERE.ToHemisphereChar())
+let FINAL_POSITION_REPORT = "!3603.33N/11206.34W-"
 let TNC2_FINAL = (sprintf "%s>%s,%s:%s" (SENDER.ToUpper()) (DESTINATION.ToUpper()) PATH FINAL_POSITION_REPORT)
 
 
@@ -44,7 +44,7 @@ let TNC2MONFormatTests =
                     Sender      = (CallSign.create (SENDER.ToUpper())).Value
                     Destination = (CallSign.create (DESTINATION.ToUpper())).Value
                     Path        = WIDEnN WIDE11 //"WIDE1-1"
-                    Information = Some (chickadee.core.PositionReport.PositionReportWithTimestampNoMessaging PACKET_POSITION_REPORT_HOUSE 
+                    Information = Some (chickadee.core.PositionReport.PositionReportWithoutTimeStampOrUltimeter PACKET_POSITION_REPORT_HOUSE 
                                   |> Information.PositionReport)
                 }.ToString()
             // Console.WriteLine packet
@@ -55,7 +55,7 @@ let TNC2MONFormatTests =
                     Sender      = (CallSign.create SENDER).Value
                     Destination = (CallSign.create DESTINATION).Value
                     Path        = WIDEnN WIDE11 //"WIDE1-1"
-                    Information = Some (chickadee.core.PositionReport.PositionReportWithoutTimeStampWithMessaging PACKET_POSITION_REPORT_HOUSE 
+                    Information = Some (chickadee.core.PositionReport.PositionReportWithoutTimeStampOrUltimeter PACKET_POSITION_REPORT_HOUSE 
                                   |> Information.PositionReport)
                 }.ToString()
             // Console.WriteLine packet
