@@ -100,6 +100,6 @@ let APRSDataTests =
         testCase "Can create local timestamp in APRS format" <| fun _ ->
             let tst = sprintf "%02i%02i%02i%s" DateTime.Now.Day DateTime.Now.Hour DateTime.Now.Minute "/"
             let currTsmp = (Timestamp.TimeStamp.value (Timestamp.TimeStamp.create Timestamp.TimeZone.Local))
-            Expect.equal currTsmp tst "Zulu Timestamp"
+            Expect.equal currTsmp tst "Local Timestamp"
             Expect.equal currTsmp.Length 7 "Local Timestamp not the expected length"
     ]
