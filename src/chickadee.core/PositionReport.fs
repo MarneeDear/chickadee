@@ -140,10 +140,10 @@ module PositionReport =
             | None, None -> sprintf "!%s/%s%c" (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) (this.Symbol.ToChar())
 
     type PositionReportFormat =
-        | PositionReportWithoutTimeStampOrUltimeter of PositionReport
-        | PositionReportWithTimestampNoMessaging of PositionReport
-        | PositionReportWithoutTimeStampWithMessaging of PositionReport
-        | PositionReportWithTimestampWithMessaging of PositionReport
+        | PositionReportWithoutTimeStampOrUltimeter of PositionReport //Tested
+        | PositionReportWithTimestampNoMessaging of PositionReport //Tested
+        | PositionReportWithoutTimeStampWithMessaging of PositionReport  //Tested
+        | PositionReportWithTimestampWithMessaging of PositionReport //Tested
         override this.ToString() =
             match this with
             | PositionReportWithoutTimeStampOrUltimeter p     -> p.ToString()
