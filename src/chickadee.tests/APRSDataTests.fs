@@ -3,6 +3,7 @@
 open Expecto
 open System
 open chickadee.core.PositionReport
+open chickadee.core
 
 [<Literal>] 
 let BIG_MESSAGE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -91,4 +92,14 @@ let APRSDataTests =
     testList "Position Report Tests" [
         testCase "Position Report comment longer than 43 characters fails" <| fun _ ->
             Expect.isNone (PositionReportComment.create BIG_MESSAGE) "Comment was longer than 43 characters but it dit not fail"
+        testCase "Can create zulu timestamp in APRS format" <| fun _ ->
+            let tst = sprintf "%02i%02i%02i%s" DateTime.Now.Day DateTime.Now.Hour DateTime.Now.Minute "z"
+            let currTsmp = (Timestamp.TimeStamp.value (Timestamp.TimeStamp.create Timestamp.TimeZone.Zulu))
+            Expect.equal currTsmp tst "Zulu Timestamp"
+            Expect.equal currTsmp.Length 7 "Zulu Timestamp not the expected length"
+        testCase "Can create local timestamp in APRS format" <| fun _ ->
+            let tst = sprintf "%02i%02i%02i%s" DateTime.Now.Day DateTime.Now.Hour DateTime.Now.Minute "/"
+            let currTsmp = (Timestamp.TimeStamp.value (Timestamp.TimeStamp.create Timestamp.TimeZone.Local))
+            Expect.equal currTsmp tst "Zulu Timestamp"
+            Expect.equal currTsmp.Length 7 "Local Timestamp not the expected length"
     ]
