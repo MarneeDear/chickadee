@@ -26,11 +26,11 @@ receives an acknowledgement, or it is canceled, or it times out.
 *)
 module Message =
 
-    type MessageID = private MessageID of int
+    type MessageID = private MessageID of string
     module MessageID =
-        let create (n:int) =
+        let create (n:string) =
             match n with 
-            | n when n < 10 -> Some (MessageID n)
+            | n when n.Length = 1 -> Some (MessageID n)
             | _ -> None
         let value (MessageID n) = n
 
@@ -88,7 +88,7 @@ module Message =
             MessageNumber : MessageNumber
         }
         override this.ToString() =
-            sprintf ":%-s:ack:%s" (CallSign.value this.Addressee) (MessageNumber.value this.MessageNumber)
+            sprintf ":%-9s:ack%s" (CallSign.value this.Addressee) (MessageNumber.value this.MessageNumber)
 
     (*
     Message Rejection If a station is unable to accept a message, it can send a rej message instead
@@ -107,7 +107,7 @@ module Message =
             MessageNumber : MessageNumber
         }
         override this.ToString() =
-            sprintf ":%-s:rej:%s" (CallSign.value this.Addressee) (MessageNumber.value this.MessageNumber)
+            sprintf ":%-9s:rej%s" (CallSign.value this.Addressee) (MessageNumber.value this.MessageNumber)
 
     (*
     General Bulletins 
@@ -136,7 +136,7 @@ module Message =
             BulletinText : MessageText
         }
         override this.ToString() =
-            sprintf ":BLN%i%5s:%s" (MessageID.value this.BulletinId) System.String.Empty (MessageText.value this.BulletinText)
+            sprintf ":BLN%s%5s:%s" (MessageID.value this.BulletinId) System.String.Empty (MessageText.value this.BulletinText)
 
     (*
     Announcements 
@@ -163,7 +163,7 @@ module Message =
             AnnouncementText : MessageText
         }
         override this.ToString() =
-            sprintf ":BLN%i%5s:%s" (MessageID.value this.AnnouncementId) System.String.Empty (MessageText.value this.AnnouncementText)
+            sprintf ":BLN%s%5s:%s" (MessageID.value this.AnnouncementId) System.String.Empty (MessageText.value this.AnnouncementText)
 
     type MessageFormat =
         | Message of Message
