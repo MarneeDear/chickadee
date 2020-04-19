@@ -14,6 +14,7 @@
     <Compile Include="TNC2MONActivePatternsTests.fs" />
     <Compile Include="TNC2MONRepositoryTests.fs" />
     <Compile Include="APRSDataTests.fs" />
+    <Compile Include="PositionReportTests.fs" />
     <Compile Include="CommonTests.fs" />
     <Compile Include="TNC2FormatTests.fs" />
     <Compile Include="Program.fs" />
