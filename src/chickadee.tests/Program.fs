@@ -38,6 +38,15 @@ let main argv =
     //DireWolfTests.WriteFramesTests
     //|> runTests config
 
+    //APRSDataTests.APRSDataTests
+    //|> runTests config
+
+    //PositionReportTests.PositionReportTests
+    //|> runTests config
+
+    //MessageTests.MessageTests
+    //|> runTests config
+
     runTestsInAssembly config argv
 
     //runTestsInAssembly defaultConfig argv
