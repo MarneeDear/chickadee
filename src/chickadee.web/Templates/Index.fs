@@ -47,7 +47,7 @@ let index =
             div [_class "tile is-ancestor"] [
                 div [_class "tile is-parent is-3"] [
                     article [_class "tile is-child notification is-warning box"] [
-                        a [_class "title"; _href "/all"] [encodedText "All Received Messages"]
+                        a [_class "title"; _href "/all"] [encodedText "All Received Packets"]
                     ]
                 ]
             ]            
