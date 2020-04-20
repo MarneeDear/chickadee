@@ -36,6 +36,7 @@ let browserRouter = router {
 
     //MESSAGES
     forward "/messages" Messages.Controller.resource
+    forward "/messages/add" Messages.Controller.resource
 
     //WEATHER REPORTS
     forward "/weather_reports" WeatherReport.Controller.resource

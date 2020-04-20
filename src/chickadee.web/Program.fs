@@ -29,6 +29,7 @@ let endpointPipe = pipeline {
 
 let app = application {
     pipe_through endpointPipe
+    use_antiforgery
     logging configSerilog
     error_handler (fun ex logger -> 
                                     logger.LogCritical(ex.Message)

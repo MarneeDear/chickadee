@@ -7,12 +7,15 @@ module Views =
 
     let index (rxs:AllReceived list option) (txs:AllTransmitted list option) (rxsError:string option) (txsError:string option)  = 
         let content = [
-            //for rx in rxs do
-            //    encodedText rx.RawPacket
-
-            //for tx in txs do
-            //    encodedText tx.RawPacket
             section [_class "section"] [
+                nav [_class "breadcrumb"] [
+                    ul [] [
+                        li [] [
+                            a [_href "/"] [encodedText "Home"]
+                        ]
+                    ]
+                ]
+                
                 h1 [_class "title"] [encodedText "Received Frames"]
                 table [_class "table"] [
                     thead [] [
@@ -57,3 +60,4 @@ module Views =
 
         ]
         App.layout content
+
