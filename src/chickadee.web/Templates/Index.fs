@@ -22,17 +22,17 @@ let index =
         section [_class "section"] [
             div [_class "tile is-ancestor"] [
                 div [_class "tile is-parent is-3"] [
-                    article [_class "tile is-child notification is-info box"] [
+                    article [_class "tile is-child notification is-primary box"] [
                         a [_class "title"; _href "/position_reports"] [encodedText "Position Reports"]
                     ]
                 ]
                 div [_class "tile is-parent is-3"] [
-                    article [_class "tile is-child notification is-info box"] [
+                    article [_class "tile is-child notification is-success box"] [
                         a [_class "title"; _href "/race_reports"] [encodedText "Race Reports"]
                     ]
                 ]
                 div [_class "tile is-parent is-3"] [
-                    article [_class "tile is-child notification is-info box"] [
+                    article [_class "tile is-child notification is-warning box"] [
                         a [_class "title"; _href "/messages"] [encodedText "Messages"]
                     ]
                 ]
@@ -46,8 +46,8 @@ let index =
         section [_class "section"] [
             div [_class "tile is-ancestor"] [
                 div [_class "tile is-parent is-3"] [
-                    article [_class "tile is-child notification is-warning box"] [
-                        a [_class "title"; _href "/all"] [encodedText "All Received Packets"]
+                    article [_class "tile is-child notification is-danger box"] [
+                        a [_class "title"; _href "/all"] [encodedText "All Packets"]
                     ]
                 ]
             ]            

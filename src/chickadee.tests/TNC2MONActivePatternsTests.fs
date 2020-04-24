@@ -171,4 +171,28 @@ let MessageParsingTests =
                 | MessageActivePatterns.MessageNumber n -> MessageNumber.value n
                 | _                                     -> String.Empty
             Expect.equal result "12345" "Message Number part was not parsed correctly"
+        testCase "Too long message field does not parse" <| fun _ ->
+            let result =
+                match "KG7SIO   :HELLO WORLD sdklgfhsdklghdfsglkfdshglkfsdhgsdfklghsfdklghfdsglkfsdhgsfdlkghfgkflghfkgfhgfkhgfklh{12345" with
+                | MessageActivePatterns.Message _ -> true
+                | _ -> false
+            Expect.isFalse result "too long message should not have returned a value"
+        testCase "67 character message text should be parsed correctly" <| fun _ ->
+            let result =
+                match "KG7SIO   :HELLO WORLD sdklgfhsdklghdfsglkfdshglkfsdhgsdfklghsfdklghfdsglkfsdh{12345" with
+                | MessageActivePatterns.Message m -> MessageText.value m
+                | _ -> String.Empty
+            Expect.equal result "HELLO WORLD sdklgfhsdklghdfsglkfdshglkfsdhgsdfklghsfdklghfdsglkfsdh" "message should not have returned a value"
+        testCase "68 character message text should not be parsed" <| fun _ ->
+            let result =
+                match "KG7SIO   :HELLO WORLD sdklgfhsdklghdfsglkfdshglkfsdhgsdfklghsfdklghfdsglkfsdh9{12345" with
+                | MessageActivePatterns.Message _ -> true
+                | _ -> false
+            Expect.isFalse result "message should not have returned a value"
+        testCase "Too long message number does not parse" <| fun _ ->
+            let result =
+                match "KG7SIO   :HELLO WORLD{123456" with
+                | MessageActivePatterns.MessageNumber _ -> true
+                | _ -> false
+            Expect.isFalse result "Too long message number should not have returned a value"
     ]

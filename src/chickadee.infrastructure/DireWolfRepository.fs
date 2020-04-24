@@ -4,13 +4,12 @@ open chickadee.core
 open chickadee.core.TNC2MonActivePatterns
 open chickadee.core.DataFormats.DataFormatType
 open chickadee.infrastructure.database
+open chickadee.core.PositionReport
 open System
 open System.IO
 open FSharp.Control.Tasks
 open System.Threading.Tasks
 open Microsoft.Data.Sqlite
-open chickadee.core.TNC2MON
-open System.Collections.Generic
 
 module KissUtil =
     open chickadee.infrastructure.TNC2MONRepository
@@ -80,12 +79,44 @@ module KissUtil =
                                         VALUES (@raw_packet, @packet_type);" frame
         }
 
-    let getTransmitFrames connectionString : Task<Result<RawTransmittedFrame seq, exn>> =
+    let savePacketToDatabase (connectionString:string) (p:TNC2MON.Packet) =
+        let pType =
+            match p.Information with
+            | Some i -> match i with
+                        | TNC2MON.Message _ -> APRSDataFormats.Message.ToString()
+                        | TNC2MON.PositionReport prt -> match prt with
+                                                        | PositionReportFormat.PositionReportWithoutTimeStampOrUltimeter p -> APRSDataFormats.PositionReportWithoutTimeStampOrUltimeter.ToString()
+                                                        | PositionReportFormat.PositionReportWithoutTimeStampWithMessaging p -> APRSDataFormats.PositionReportWithoutTimeStampWithMessaging.ToString()
+                                                        | PositionReportFormat.PositionReportWithTimestampNoMessaging p -> APRSDataFormats.PositionReportWithTimestampNoMessaging.ToString()
+                                                        | PositionReportFormat.PositionReportWithTimestampWithMessaging p -> APRSDataFormats.PositionReportWithTimestampWithMessaging.ToString()
+            | None -> String.Empty
+        
+        let frame =
+            {
+                rowid = 0
+                date_created = String.Empty
+                raw_packet = p.ToString()
+                packet_type = pType
+                transmitted = 0
+            }        
+        saveTransmitFrame connectionString frame
+
+    let getTransmitFrames connectionString (transmitted:bool option) (packetType:string option) : Task<Result<RawTransmittedFrame seq, exn>> =
         task {
             use connection = new SqliteConnection(connectionString)
-            return! query connection "SELECT rowid, date_created, raw_packet, packet_type, transmitted 
-                                      FROM transmitted
-                                      WHERE transmitted = 0;" None            
+            match transmitted, packetType with
+            | Some t, Some p -> return! query connection "SELECT rowid, date_created, raw_packet, packet_type, transmitted 
+                                                          FROM transmitted
+                                                          WHERE transmitted = @trans and packet_type = @packetType;" (Some <| dict ["trans" => t; "packetType" => p])            
+            | Some t, None -> return! query connection "SELECT rowid, date_created, raw_packet, packet_type, transmitted 
+                                                        FROM transmitted
+                                                        WHERE transmitted = @trans;" (Some <| dict ["trans" => t])
+            | None, Some p -> return! query connection "SELECT rowid, date_created, raw_packet, packet_type, transmitted 
+                                                        FROM transmitted
+                                                        WHERE packet_type = @packetType;" (Some <| dict ["packetType" => p])            
+            | None, None -> return! query connection "SELECT rowid, date_created, raw_packet, packet_type, transmitted 
+                                                      FROM transmitted;" None
+                                                      
         }
 
     let setTransmitted connectionString (idList: int list) : Task<Result<int,exn>> =
@@ -105,7 +136,7 @@ module KissUtil =
     let writeStoredFramesToKissUtil (connectionString:String) (commands: KISS.Command list option) (path:string) =
         let doGet =
             task {
-                return! getTransmitFrames connectionString
+                return! getTransmitFrames connectionString None None
             }
         match doGet.Result with
         | Ok result when result |> Seq.length > 0 -> 
@@ -176,10 +207,13 @@ module KissUtil =
  
         rcrds |> Array.map saveFrame
 
-    let getReceivedFrames connectionString : Task<Result<RawReceivedFrame seq, exn>> =
+    let getReceivedFrames connectionString (packetType:string option) : Task<Result<RawReceivedFrame seq, exn>> =
         task {
             use connection = new SqliteConnection(connectionString)
-            return! query connection "SELECT date_created, raw_packet, packet_type
-                                      FROM received;" None            
+            match packetType with
+            | Some t -> return! query connection "SELECT date_created, raw_packet, packet_type
+                                                  FROM received WHERE packet_type = @packetType;" (Some <| dict ["packetType" => t])
+            | None -> return! query connection "SELECT date_created, raw_packet, packet_type
+                                                FROM received;" None            
         }
 

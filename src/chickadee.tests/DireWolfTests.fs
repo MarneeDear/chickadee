@@ -30,7 +30,7 @@ let txFrame : RawTransmittedFrame =
         date_created = ""
         rowid = 0
         raw_packet = "KG7SIO>APDW15,WIDE1-1:=3603.33N/11206.34W-"
-        packet_type = "Message"
+        packet_type = "Position Report without timestamp or Ultimeter station"
         transmitted = 0
     }
 
@@ -50,7 +50,7 @@ let WriteFramesTests =
                 {
                     date_created = ""
                     raw_packet = "KG7SIO>APDW15,WIDE1-1:=3603.33N/11206.34W-"
-                    packet_type = "Message"
+                    packet_type = "Position Report without timestamp or Ultimeter station"
                     error = ""
                 }
             let result = (saveRawReceivedFrame CONN rawFrame).Result
@@ -60,7 +60,7 @@ let WriteFramesTests =
             Expect.isOk result "Tx frame was not saved."
         testCase "Can set frames to transmitted2" <| fun _ ->
             saveTx ()
-            let result = (getTransmitFrames CONN).Result
+            let result = (getTransmitFrames CONN (Some true) None).Result
             Expect.isOk result "Error getting transmit records"
             match result with
             | Ok txs -> let ids = txs |> Seq.map (fun t -> t.rowid) |> Seq.toList

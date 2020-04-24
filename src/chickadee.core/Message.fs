@@ -39,7 +39,7 @@ module Message =
         let create (m:string) =
             match (m.Trim()) with
             | m when m.Length < 68 && not (m.Contains("|")) && not (m.Contains("~")) -> Some (MessageText m)
-            | _ -> None //MessageText (m.Substring(0, 67)) //TODO or return None TODO or throw an exception?
+            | _ -> None 
         let value (MessageText m) = m
 
     type MessageNumber = private MessageNumber of string
@@ -48,7 +48,7 @@ module Message =
             match (n.Trim()) with
             | n when n.Length <= 5 -> Some (MessageNumber n)
             | _ -> None //MessageNumber (n.Substring(0, 5)) //Or fail with None?
-        let value (MessageNumber n) = n
+        let value (MessageNumber n) = n.PadLeft(5, '0')
 
 
     (*            

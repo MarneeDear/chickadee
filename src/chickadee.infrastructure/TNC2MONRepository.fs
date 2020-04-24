@@ -7,6 +7,11 @@ open chickadee.core.DataFormats.PositionReportActivePatterns
 open chickadee.core.TNC2MonActivePatterns
 open chickadee.core.Participant
 open chickadee.core.DataFormats.DataFormatType
+open FSharp.Control.Tasks
+open System.Threading.Tasks
+open Microsoft.Data.Sqlite
+open chickadee.infrastructure.database
+
 
 //TODO Kiss settings
 (*
@@ -231,7 +236,7 @@ module TNC2MONRepository =
                   | Ok i, Error m2 -> sprintf "Could not parse record [%s]. ERROR [%s]" record m2 |> Error
                   | Error m1, Error m2 -> sprintf "Could not parse record [%s]. ERROR [%s] [%s]" record m1 m2 |> Error
         | Error m -> sprintf "Could not parse record [%s]. ERROR [%s]" record m |> Error
-        
+
     
     ////All received frames are displayed in the usual monitor format, preceded with the channel number inside of [ ].
     ////[0] K1NRO-1>APDW14,WIDE2-2:!4238.80NS07105.63W#PHG5630

@@ -16,8 +16,8 @@ module Controller =
         let logger = ctx.GetLogger()
 
         task {
-            let! txResult = KissUtil.getTransmitFrames cnf.connectionString 
-            let! rxResult = KissUtil.getReceivedFrames cnf.connectionString
+            let! txResult = KissUtil.getTransmitFrames cnf.connectionString None None
+            let! rxResult = KissUtil.getReceivedFrames cnf.connectionString None
             let mapToTx () =
                 match txResult with
                 | Ok txs -> txs |> Seq.map (fun t -> {

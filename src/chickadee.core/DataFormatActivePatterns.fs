@@ -52,16 +52,15 @@ module MessageActivePatterns =
 
     let (|Message|_|) (msg:string) = 
         match msg.IndexOf(":"), msg.IndexOf("{") with
-        | i, j when i = 9 && j > 9 && j < i + 67    -> MessageText.create (msg.Substring(i + 1, j - i - 1))
+        | i, j when i = 9 && j > 9 && j <= i + 68    -> MessageText.create (msg.Substring(i + 1, j - i - 1))
         | _                                         -> None
 
     let (|MessageNumber|_|) (msg:string) =
         match msg.IndexOf(":"), msg.IndexOf("{") with
-        | i, j when i = 9 && j > 9 && j < i + 67 -> MessageNumber.create (sprintf "%5s" (msg.Substring(j+1).Trim()))
+        | i, j when i = 9 && j > 9 && j <= i + 68 -> MessageNumber.create (msg.Substring(j+1).Trim())
         | _, _                                   -> None
 
 module PositionReportActivePatterns =
-    open chickadee.core
 
     //Only supports Lat/Long Position Report Format — without Timestamp
     //See APRS 1.01 spec, section 8 POSITION AND DF REPORT DATA FORMATS
