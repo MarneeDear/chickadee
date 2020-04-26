@@ -3,7 +3,9 @@ module Router
 open Saturn
 open Giraffe.Core
 open Giraffe.ResponseWriters
-open PositionReports
+open Giraffe
+open Microsoft.AspNetCore.Http
+open Microsoft.Extensions.Configuration
 
 let browser = pipeline {
     plug acceptHtml
@@ -18,6 +20,16 @@ let defaultView = router {
     get "/default.html" (redirectTo false "/")
 }
 
+let validateApiKey (ctx : HttpContext) =
+    let configuration = ctx.GetService<IConfiguration>()
+    let apiKey = configuration.["TokenAPIKey"]
+    match ctx.TryGetRequestHeader "X-API-Key" with
+    | Some key -> apiKey.Equals key
+    | None     -> false
+
+//let accessDenied   = setStatusCode 401 >=> text "Access Denied"
+//let requiresApiKey = authorizeRequest validateApiKey accessDenied
+
 let browserRouter = router {
     not_found_handler (htmlView NotFound.layout) //Use the default 404 webpage
     pipe_through browser //Use the default browser pipeline
@@ -30,6 +42,9 @@ let browserRouter = router {
     //POST a message to send with KISSUTIL
     //Store sent messages and give option to re-send
     forward "/position_reports" PositionReports.Controller.resource
+
+    //Map
+    forward "/map" Map.Controller.resource
 
     //RACE REPORTS
     forward "/race_reports" RaceReport.Controller.resource
@@ -47,19 +62,20 @@ let browserRouter = router {
 
 //Other scopes may use different pipelines and error handlers
 
-// let api = pipeline {
-//     plug acceptJson
-//     set_header "x-pipeline-type" "Api"
-// }
+let api = pipeline {
+     //plug acceptJson
+     plug fetchSession
+     //plug requiresApiKey     
+     set_header "x-pipeline-type" "API"
+}
 
-// let apiRouter = router {
-//     error_handler (text "Api 404")
-//     pipe_through api
-//
-//     forward "/someApi" someScopeOrController
-// }
+let apiRouter = router {
+     //error_handler (text "Api 404")
+     pipe_through api
+     forward "/token" (fun next ctx -> (text (MapToken.GetTokenAsync ctx).Result) next ctx)
+}
 
 let appRouter = router {
-    // forward "/api" apiRouter
+    forward "/api" apiRouter
     forward "" browserRouter
 }

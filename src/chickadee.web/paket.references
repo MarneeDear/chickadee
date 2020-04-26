@@ -4,3 +4,5 @@ Microsoft.AspNetCore
 Serilog.AspNetCore
 Serilog.Sinks.Console
 Serilog.Sinks.File
+Microsoft.Azure.Services.AppAuthentication
+Otp.NET

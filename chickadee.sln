@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{1E2F5BB5-634
 		fake.sh = fake.sh
 		global.json = global.json
 		paket.dependencies = paket.dependencies
-		paket.dependenciesxx = paket.dependenciesxx
+		paket.lock = paket.lock
 		README.md = README.md
 	EndProjectSection
 EndProject
