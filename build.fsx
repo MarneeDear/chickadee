@@ -51,7 +51,7 @@ Target.create "RunWeb" (fun _ ->
 
   let browser = async {
     Threading.Thread.Sleep 8000
-    openBrowser "http://chickadee.local:8085" |> ignore
+    openBrowser "https://chickadee.local" |> ignore
   }
 
   [ server; browser]

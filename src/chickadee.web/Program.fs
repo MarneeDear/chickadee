@@ -45,7 +45,7 @@ let app = application {
                                     logger.LogCritical(ex.Message)
                                     pipeline { render_html (InternalError.layout ex) })
     use_router Router.appRouter
-    url "http://chickadee.local:8085/"
+    url "https://chickadee.local/"
     service_config configureSession
     memory_cache
     use_static "static"
