@@ -18,7 +18,7 @@ module Controller =
         task {
             //generate OTP to get the api token
             let otp =
-                let secretKey : byte[] = Encoding.ASCII.GetBytes("SEED ME HELLO WORLD 12345!")
+                let secretKey : byte[] = Encoding.ASCII.GetBytes(cnf.otpSeed)
                 let totp = new Totp(secretKey)
                 let totpCode = totp.ComputeTotp()
                 totpCode

@@ -11,7 +11,9 @@
     <Content Include="favicon.ico" />
     <Compile Include="Helpers.fs" />
     <Compile Include="MapToken.fs" />
+    <Compile Include="Templates\Map.fs" />
     <None Include="static\map.js" />
+    <Content Include="static\antenna.png" />
     <Content Include="static\logo-cropped.png" />
     <Content Include="static\logo.png" />
     <Compile Include="Config.fs" />
@@ -62,6 +64,9 @@
   <ItemGroup>
     <ProjectReference Include="..\chickadee.core\chickadee.core.fsproj" />
     <ProjectReference Include="..\chickadee.infrastructure\chickadee.infrastructure.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="static\image\map\" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

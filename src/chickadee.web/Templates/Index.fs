@@ -50,7 +50,16 @@ let index =
                         a [_class "title"; _href "/all"] [encodedText "All Packets"]
                     ]
                 ]
-            ]            
+            ]
+        ]
+        section [_class "section"] [
+            div [_class "tile is-ancestor"] [
+                div [_class "tile is-parent is-3"] [
+                    article [_class "tile is-child notification is-success box"] [
+                        a [_class "title"; _href "/map"] [encodedText "Map"]
+                    ]
+                ]
+            ]
         ]
 
         section [_class "section"] [

@@ -23,6 +23,7 @@ let setupConfig (config:IConfiguration)  =
         connectionString = config.["Database:Sqlite"]
         tokenApiKey = config.["TokenAPIKey"]
         clientId = config.["AzureMaps:ClientID"]
+        otpSeed = config.["OtpSeed"]
     }
 
 let configureSession (services : IServiceCollection) =
