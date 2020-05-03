@@ -1,0 +1,90 @@
+CODE	DSTCALL	DESCRIPTION	ROTATEDEG
+/!	BB	Police station	
+/#	BD	Digipeater	
+/$	BE	Telephone	
+/%	BF	DX cluster	
+/&	BG	HF gateway	
+/'	BH	Small aircraft	
+/(	BI	Mobile satellite station	
+/)	BJ	"Wheelchair, handicapped"	
+/*	BK	Snowmobile	
+/+	BL	Red Cross	
+"/,"	BM	Boy Scouts	
+/-	BN	House	
+/.	BO	Red X	
+//	BP	Red dot	
+/0	P0	Numbered circle: 0	
+/1	P1	Numbered circle: 1	
+/2	P2	Numbered circle: 2	
+/3	P3	Numbered circle: 3	
+/4	P4	Numbered circle: 4	
+/5	P5	Numbered circle: 5	
+/6	P6	Numbered circle: 6	
+/7	P7	Numbered circle: 7	
+/8	P8	Numbered circle: 8	
+/9	P9	Numbered circle: 9	
+/:	MR	Fire	
+/;	MS	"Campground, tent"	
+/<	MT	Motorcycle	
+/=	MU	Railroad engine	
+/>	MV	Car	
+/?	MW	File server	
+/@	MX	Hurricane predicted path	
+/A	PA	Aid station	
+/B	PB	BBS	
+/C	PC	Canoe	
+/D	PD		
+/E	PE	Eyeball	
+/F	PF	"Farm vehicle, tractor"	
+/G	PG	"Grid square, 3 by 3"	
+/H	PH	Hotel	
+/I	PI	TCP/IP network station	
+/J	PJ		
+/K	PK	School	
+/L	PL	PC user	
+/M	PM	Mac apple	
+/N	PN	NTS station	
+/O	PO	Balloon	
+/P	PP	Police car	
+/Q	PQ		
+/R	PR	Recreational vehicle	
+/S	PS	Space Shuttle	
+/T	PT	SSTV	
+/U	PU	Bus	
+/V	PV	"ATV, Amateur Television"	
+/W	PW	Weather service site	
+/X	PX	Helicopter	
+/Y	PY	Sailboat	
+/Z	PZ	Windows flag	
+/[	HS	Human	
+/\	HT	DF triangle	
+/]	HU	"Mailbox, post office"	
+/^	HV	Large aircraft	
+/_	HW	Weather station	
+/`	HX	Satellite dish antenna	
+/a	LA	Ambulance	
+/b	LB	Bicycle	
+/c	LC	Incident command post	
+/d	LD	Fire station	
+/e	LE	"Horse, equestrian"	
+/f	LF	Fire truck	
+/g	LG	Glider	
+/h	LH	Hospital	
+/i	LI	"IOTA, islands on the air"	
+/j	LJ	Jeep	
+/k	LK	Truck	
+/l	LL	Laptop	
+/m	LM	Mic-E repeater	
+/n	LN	"Node, black bulls-eye"	
+/o	LO	Emergency operations center	
+/p	LP	Dog	
+/q	LQ	"Grid square, 2 by 2"	
+/r	LR	Repeater tower	
+/s	LS	"Ship, power boat"	
+/t	LT	Truck stop	
+/u	LU	"Semi-trailer truck, 18-wheeler"	
+/v	LV	Van	
+/w	LW	Water station	
+/x	LX	X / Unix	
+/y	LY	"House, yagi antenna"	
+/z	LZ	Shelter	

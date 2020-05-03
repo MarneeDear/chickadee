@@ -6,6 +6,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="APRSSymbols.fsx" />
     <Compile Include="MessageTests.fs" />
     <Compile Include="ParticipantStatusRepositoryTests.fs" />
     <Compile Include="ParticipantStatusTests.fs" />

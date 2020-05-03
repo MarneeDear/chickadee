@@ -25,6 +25,7 @@ module Views =
             ]
             link [_rel "stylesheet"; _href "https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css"]
             script [_src "https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"] []
+            link [_rel "stylesheet"; _href "/aprs-symbols.css" ]
             script [_src "/map.js"] []
             
         ]

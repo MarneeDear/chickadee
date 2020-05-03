@@ -32,6 +32,9 @@ let configureSession (services : IServiceCollection) =
     ) |> ignore
     services
 
+let configureSerialization (services:IServiceCollection) =
+    services.AddSingleton<Giraffe.Serialization.Json.IJsonSerializer>(Thoth.Json.Giraffe.ThothSerializer())
+
 let endpointPipe = pipeline {
     plug head
     plug requestId
@@ -40,6 +43,7 @@ let endpointPipe = pipeline {
 let app = application {
     pipe_through endpointPipe
     use_antiforgery
+    service_config configureSerialization
     logging configSerilog
     use_config setupConfig
     error_handler (fun ex logger -> 

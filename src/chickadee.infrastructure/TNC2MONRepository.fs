@@ -44,12 +44,15 @@ module TNC2MONRepository =
             | None, Some _          -> Error "Latitude was not in expected format."
             | Some _, None          -> Error "Longitude was not in exptected format."
             | None, None            -> Error "Neither Latitude nor Longitude were in expected format."
-        let sym =
+        let symbolCode =
             match (|Symbol|_|) rpt with
             | Some s    -> s //Defaults to house if no match found -- TODO do I want to do this?
             | None      -> Common.SymbolCode.House
+
         let comment = //TODO handle the case where the comment is not accepted length
-            match (|Comment|_|) (sym.ToChar()) rpt with
+            let sym, dstcall = symbolCode.ToCode()
+
+            match (|Comment|_|) sym rpt with
             | Some c    -> PositionReportComment.create c
             | None      -> None //PositionReportComment.create String.Empty
 
@@ -64,7 +67,7 @@ module TNC2MONRepository =
         match posResult with
         | Ok p ->   {
                         Position    = p
-                        Symbol      = sym
+                        Symbol      = symbolCode
                         TimeStamp   = None
                         Comment     = comment 
                         //TODO is this right

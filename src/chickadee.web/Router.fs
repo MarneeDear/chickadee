@@ -73,6 +73,7 @@ let apiRouter = router {
      //error_handler (text "Api 404")
      pipe_through api
      forward "/token" (fun next ctx -> (text (MapToken.GetTokenAsync ctx).Result) next ctx)
+     forward "/map_data" MapData.Controller.resource //(fun next ctx -> ((MapData.GetPositionReports ctx).Result) next ctx)
 }
 
 let appRouter = router {

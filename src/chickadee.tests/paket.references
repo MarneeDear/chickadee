@@ -4,3 +4,4 @@ FsCheck
 Expecto
 Expecto.TestResults
 Expecto.FsCheck
+FSharp.Data

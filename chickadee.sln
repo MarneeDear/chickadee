@@ -37,6 +37,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{DAF2911D-E
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "chickadee.tests", "src\chickadee.tests\chickadee.tests.fsproj", "{504FB9A6-0849-44D7-9BF3-CE728DFEA45A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{0727A657-0F68-4063-9E81-F3CD576E87D7}"
+	ProjectSection(SolutionItems) = preProject
+		data\primarysymbols.tsv = data\primarysymbols.tsv
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

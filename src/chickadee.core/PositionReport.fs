@@ -133,11 +133,12 @@ module PositionReport =
 
         //TODO add timestamp
         override this.ToString() =
+            let sym, dstcall = this.Symbol.ToCode()
             match this.TimeStamp, this.Comment with
-            | Some t, Some c -> sprintf "@%s%s/%s%c%s" (TimeStamp.value t) (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) (this.Symbol.ToChar()) (PositionReportComment.value c)
-            | Some t, None -> sprintf "/%s%s/%s%c" (TimeStamp.value t) (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) (this.Symbol.ToChar())
-            | None, Some c -> sprintf "=%s/%s%c%s" (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) (this.Symbol.ToChar()) (PositionReportComment.value c)
-            | None, None -> sprintf "!%s/%s%c" (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) (this.Symbol.ToChar())
+            | Some t, Some c -> sprintf "@%s%s/%s%c%s" (TimeStamp.value t) (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) sym (PositionReportComment.value c)
+            | Some t, None -> sprintf "/%s%s/%s%c" (TimeStamp.value t) (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) sym
+            | None, Some c -> sprintf "=%s/%s%c%s" (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) sym (PositionReportComment.value c)
+            | None, None -> sprintf "!%s/%s%c" (FormattedLatitude.value this.Position.Latitude) (FormattedLongitude.value this.Position.Longitude) sym
 
     type PositionReportFormat =
         | PositionReportWithoutTimeStampOrUltimeter of PositionReport //Tested

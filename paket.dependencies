@@ -5,6 +5,7 @@ storage: none
 framework: netcore3.1, netstandard2.0, netstandard2.1
 
 nuget FSharp.Core
+nuget FSharp.Data
 nuget Microsoft.Data.Sqlite
 nuget Simple.Migrations
 nuget Microsoft.AspNetCore
@@ -17,6 +18,7 @@ nuget Dapper
 nuget Argu
 nuget Microsoft.Azure.Services.AppAuthentication
 nuget Otp.NET
+nuget Thoth.Json.Giraffe
 
 //LOGGING
 nuget Serilog.AspNetCore
