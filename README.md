@@ -38,8 +38,6 @@ See the project files, but here are the highlights.
 * [Argu](https://github.com/fsprojects/Argu) for the CLI
 * [Expecto](https://github.com/haf/expecto) for unit tests
 
-Future enhancements will include a [Fable-based, Elmish, progressive web app](https://elmish.github.io/elmish/) and a Saturn based web server.
-
 ### Program
 
 The design calls for 3 main parts:
@@ -49,40 +47,44 @@ The design calls for 3 main parts:
 * A CLI that can be used to write TNC2MON format frames.
   * They can be written to a folder monitored by the `kissutil`. When the `kissutil` detects a new file DireWolf will process the frames and transmit.
   * Presently only produces TNC2MON formatted messages with `Lat/Lon Position Report without Timestamp`, and a plain text message
-* A progressive web app that can be used to compose APRS packets that will be used by the `kissutil`. (not started)
-  * The service will serve the web app.
+* A web app (UI) that can be used to compose APRS packets that will be used by the `kissutil`. I have plans to support a number of APRS data formats. At the moment you can compose Message types but not Position Reports through the web UI.
+* A background service that reads from the `kissutil` and saves the received packets to the database.
 
 ## How to setup and run
 
-First, make sure you have .NET Core SDK 2.2 or above installed.
+First, make sure you have .NET Core SDK 3.1 or above installed.
 
-Currently, there is only a CLI that can be used to create a `TNC2MON` formatted KISS frame suitable for the Dire Wolf `kissutil`, but a progressive web app (in Fable) is planned.
+After cloning this repo you can restore the dependencies, run the migrations, run the tests, run the CLI, run the Web UI, or run the background server with [FAKE](https://fake.build/) script. FAKE is a DSL for build tasks that will run any `dotnet` command.
 
-The CLI can produce a frame with a simple message or a Lat/Lon position report without timestamp as per the APRS 1.01 specification.
+Once you can cloned the repo, `cd` into the root of the repo and do the setup steps:
 
-After cloning this repo you can restore the dependencies, run the migrations, run the tests, or run the CLI with `dotnet`.
-
-### Run the migrations
-
-```bash
-dotnet run -p src/chickadee.migrations
-```
-
-This should create two tables.
+1. Install the dotnet tools
+    1. `dotnet tool restore`
+2. Install the dependencies (packages)
+    1. `dotnet packet install`
+    2. This will run `paket`, download dependencies, and link references in all projects
+3. Run the data migrations
+    1. `dotnet fake build target MigrateUp`
+    2. This will create the database where sent and received packets are stored
+4. Run the tests
+    1. `dotnet fake build target Test`
+    2. This will run tests. If any tests fail you will not be able to run the application.
+5. Run the build and launch the Web UI
+    1. `dotnet fake build target Build`. If the build passes (no errors) you can run the web UI
+    2. `dotnet fake build target RunWeb`
+    3. This will launch the web UI in a browser window.
 
 ### Run the CLI and see the possible commands
 
 From the root project folder (the folder that was created when you cloned this repo)
 
-```bash
+```cmd
 dotnet run --project src/chickadee.cli/ -- --help
 ```
 
-This will restore dependencies, compile the code, and run the CLI (please be patient).
-
 You should see the help output looking like this:
 
-```bash
+```cmd
 USAGE: faprs [--help] --sender <sender> --destination <destination> [--path <path>] [--custommessage <msg>] [--savefilepath <save>] [<subcommand> [<options>]]
 
 SUBCOMMANDS:
@@ -107,13 +109,13 @@ OPTIONS:
 
 There are also sub-commands for the `position report`. You can get help for those too.
 
-```bash
+```cmd
 dotnet run --project src/chickadee.cli/ -- --rpt --help
 ```
 
 You should see some helpful stuff like this.
 
-```bash
+```cmd
 USAGE: faprs --positionreport [--help] latitude <latitude> <hemisphere> longitude <longitude> <hemisphere> [symbol <symbol>] [comment <comment>]
 
 OPTIONS:
@@ -129,7 +131,7 @@ OPTIONS:
 
 #### Create a TNC2MON formatted frame with position report
 
-```bash
+```cmd
 dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --rpt latitude 36.106964 longitude -112.112999 symbol b comment "Join Oro Valley Amateur Radio Club"
 ```
 
@@ -302,18 +304,12 @@ rtl_fm -p 63 -f 144.39M - | direwolf -d n -c sdr.conf -r 24000 -D 1 -
 
 ## Run the web project
 
-`chickadee.service` provides a web interface to enter messages you want to send over APRS and to see messages received over APRS.
+`chickadee.service` provides a background service that will process records received by DireWolf and save them to the database available to the web UI.
 
-You can run it with `dotnet run` and `dotnet watch`.
+You can run it with `fake`.
 
 ### Run with re-loading after changes.
 
 ```bash
-dotnet watch -p src/chickadee.service/ run
-```
-
-### Run once
-
-```bash
-dotnet run -p src/chickadee.service/
+dotnet fake build target RunService
 ```
