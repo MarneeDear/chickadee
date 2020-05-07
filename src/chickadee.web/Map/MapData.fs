@@ -18,19 +18,20 @@ module Controller =
     //TODO map a symbol to an image
     //REname the images?
         task {
+            let imgPth = "/image/map/aprs-symbols/primary/"
             let mapData = [ {
                 CallSign = "KG7SIO-1"
-                Image = "/image/map/aprs-symbols/aprs_small/image_part_001.png"
+                Image = sprintf "%s%s" imgPth "car.png"
                 Location = [-110.911789; 32.253460]
             };
             {
                 CallSign = "KG7SIO-2"
-                Image = "/image/map/aprs-symbols/aprs_small/image_part_002.png"
+                Image = sprintf "%s%s" imgPth "ambulance.png"
                 Location = [-111.166618; 32.296738]
             };
             {
                 CallSign = "KG7SIO-3"
-                Image = "/image/map/aprs-symbols/aprs_small/image_part_003.png"
+                Image = sprintf "%s%s" imgPth "fire.png"
                 Location = [-110.788124; 32.443417]
             }]
             return! ControllerHelpers.Controller.json ctx mapData
