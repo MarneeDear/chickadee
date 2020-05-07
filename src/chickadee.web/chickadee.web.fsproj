@@ -221,10 +221,10 @@
     <Compile Include="Templates\Index.fs" />
     <Compile Include="Templates\InternalError.fs" />
     <Compile Include="Templates\NotFound.fs" />
-    <Compile Include="Map\MapData.fs" />
     <Compile Include="Map\MapToken.fs" />
     <Compile Include="Map\MapModel.fs" />
     <Compile Include="Map\MapView.fs" />
+    <Compile Include="Map\MapData.fs" />
     <Compile Include="Map\MapController.fs" />
     <Compile Include="All\AllModels.fs" />
     <Compile Include="All\AllViews.fs" />
@@ -305,7 +305,6 @@
     <Content Include="static\image\map\aprs-symbols\primary\hurricane-predicted-path.png" />
     <Content Include="static\image\map\aprs-symbols\primary\image_part_042.png" />
     <Content Include="static\image\map\aprs-symbols\primary\image_part_049.png" />
-    <Content Include="static\image\map\aprs-symbols\primary\image_part_061.png" />
     <Content Include="static\image\map\aprs-symbols\primary\image_part_091.png" />
     <Content Include="static\image\map\aprs-symbols\primary\image_part_092.png" />
     <Content Include="static\image\map\aprs-symbols\primary\image_part_093.png" />
@@ -318,6 +317,7 @@
     <Content Include="static\image\map\aprs-symbols\primary\laptop.png" />
     <Content Include="static\image\map\aprs-symbols\primary\large-aircraft.png" />
     <Content Include="static\image\map\aprs-symbols\primary\mac-apple.png" />
+    <Content Include="static\image\map\aprs-symbols\primary\mailbox-postoffice.png" />
     <Content Include="static\image\map\aprs-symbols\primary\mic-e-repeater.png" />
     <Content Include="static\image\map\aprs-symbols\primary\mobile-satellite-station.png" />
     <Content Include="static\image\map\aprs-symbols\primary\motorcycle.png" />
