@@ -174,31 +174,14 @@ Contributors welcome. Please follow the [F# Style Guide](https://docs.microsoft.
 
 ### How to get started
 
-1. Clone this repo
-2. Run `dotnet build` or run the tests like below under `Run the tests`
+#### Setup the appsettings file for the Web UI
 
-Or
+TODO
 
-There is a `DOCKERFILE` if you are so inclined.
+#### Steps to build and run
+
+There is a `DOCKERFILE` if you are so inclined, but I haven't tested it.
 > The Dockerfile has not been tested lately and may not work so good. MMD 10/26/2019 
-
-Run service:  `dotnet run -p src/chickadee.service` or `dotnet watch -p src/chickadee.service/ run`
-
-### Run the tests
-
-```bash
-dotnet run -p src/chickadee.tests -f netcoreapp3.1
-```
-
-This will restore dependencies, compile all projects, and run tests.
-
-#### Run the tests while changing code (dotnet watch)
-
-```bash
-dotnet watch -p src/chickadee.tests run -f netcoreapp3.1
-```
-
-The tests will re-run every time you save changes, including adding more tests.
 
 ## Publish and deploy to a Raspberry PI
 
