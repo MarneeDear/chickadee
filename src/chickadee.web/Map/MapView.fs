@@ -1,4 +1,4 @@
-﻿namespace Map
+﻿namespace AprsMap
 
 module Views =
     open Microsoft.AspNetCore.Http

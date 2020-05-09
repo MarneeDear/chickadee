@@ -1,4 +1,4 @@
-﻿namespace chickadee.web
+﻿namespace AprsMap
 
 module Models =
 
@@ -32,7 +32,7 @@ module Models =
             {Symbol = SymbolCode.RailroadEngine; Icon = "railroad-engine.png"}
             {Symbol = SymbolCode.Car; Icon = "car.png"}
             {Symbol = SymbolCode.FileServer; Icon = "file-server.png"}
-            {Symbol = SymbolCode.HurricanePredictedPath; Icon = "hurrican-predicted-path.png"}
+            {Symbol = SymbolCode.HurricanePredictedPath; Icon = "hurricane-predicted-path.png"}
             {Symbol = SymbolCode.AidStation; Icon = "aid-station.png"}
             {Symbol = SymbolCode.BBS; Icon = "bbs.png"}
             {Symbol = SymbolCode.Canoe; Icon = "canoe.png"}

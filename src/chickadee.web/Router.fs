@@ -44,7 +44,7 @@ let browserRouter = router {
     forward "/position_reports" PositionReports.Controller.resource
 
     //Map
-    forward "/map" Map.Controller.resource
+    forward "/map" AprsMap.Controller.resource
 
     //RACE REPORTS
     forward "/race_reports" RaceReport.Controller.resource
@@ -73,7 +73,7 @@ let apiRouter = router {
      //error_handler (text "Api 404")
      pipe_through api
      forward "/token" (fun next ctx -> (text (MapToken.GetTokenAsync ctx).Result) next ctx)
-     forward "/map_data" MapData.Controller.resource //(fun next ctx -> ((MapData.GetPositionReports ctx).Result) next ctx)
+     forward "/map_data" AprsMap.MapData.Controller.resource //(fun next ctx -> ((MapData.GetPositionReports ctx).Result) next ctx)
 }
 
 let appRouter = router {

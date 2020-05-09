@@ -1,4 +1,4 @@
-﻿namespace Map
+﻿namespace AprsMap
 
 open Saturn
 open Giraffe
