@@ -161,12 +161,7 @@ module TNC2MONRepository =
         : Message ~ [Do not use — TNC stream switch character]
         ; Object
     *)
-    let convertRecordToAPRSData (record:string) =
-        let frame rcrd =
-            match (|Frame|_|) rcrd with
-            | Some f    -> f |> Ok
-            | None      -> "Frame not in expected format." |> Error
-        
+    let convertFrameToAPRSData (frame:string) =
         let information frame =
             match (|Information|_|) frame with
             | Some m    -> m |> Ok
@@ -182,21 +177,25 @@ module TNC2MONRepository =
             | Some APRSDataFormats.DataFormat.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
             | _ -> mapUnsupportedMessage(info.Substring 1) |> Ok
 
-        frame record
-        |> Result.bind information
+        frame
+        |> information
         |> Result.bind data
 
+    let convertRecordToAPRSData (record:string) =
+        let frame rcrd =
+            match (|Frame|_|) rcrd with
+            | Some f    -> f |> Ok
+            | None      -> "Frame not in expected format." |> Error
+        
+        (frame record)
+        |> Result.bind convertFrameToAPRSData 
+        
     let convertToPacket (record:string) =
         let frame rcrd =
             match (|Frame|_|) rcrd with
             | Some f    -> f |> Ok
             | None      -> "Frame not in expected format." |> Error
         
-        //let information frame =
-        //    match (|Information|_|) frame with
-        //    | Some i    -> i |> Ok
-        //    | None      -> "No information part found." |> Error
-
         let address frame =
             match (|Address|_|) frame with
             | Some a -> a |> Ok
@@ -239,6 +238,64 @@ module TNC2MONRepository =
                   | Ok i, Error m2 -> sprintf "Could not parse record [%s]. ERROR [%s]" record m2 |> Error
                   | Error m1, Error m2 -> sprintf "Could not parse record [%s]. ERROR [%s] [%s]" record m1 m2 |> Error
         | Error m -> sprintf "Could not parse record [%s]. ERROR [%s]" record m |> Error
+
+    (*   
+
+        /092345z4903.50N/07201.75W>Test1234
+
+        POSTION example
+        4903.50N/07201.75W
+
+        LATTITUDE
+        4903.50N is 49 degrees 3 minutes 30 seconds north.
+        01234567
+        49 degress
+        3 minutes
+        30 seconds
+
+        LONGITUDE
+        07201.75W is 72 degrees 1 minute 45 seconds west.
+        012345678
+        72 degrees
+        1 minues
+        45 seconds
+
+
+    *)
+
+    let convertToLat (formattedLat:FormattedLatitude) =
+        let lat = FormattedLatitude.value formattedLat
+        let deg = float (lat.Substring(0,2).TrimStart([|'0'|]))
+        let min = float (lat.Substring(2, 2).TrimStart([|'0'|]))
+        let sec = float (lat.Substring(4,3))
+        let hem = lat.Substring(7,1)
+
+        let sign =
+            match hem with
+            | "N" -> 1.0
+            | "S" -> -1.0
+            | _ -> 0.0
+        
+
+        (deg + (min/60.0) + (sec * 60.0)/3600.0) * sign
+
+    let convertToLon (formattedLon:FormattedLongitude) =
+        let lon = FormattedLongitude.value formattedLon
+        let deg = float (lon.Substring(0,3).TrimStart([|'0'|]))
+        let min = float (lon.Substring(3, 2).TrimStart([|'0'|]))
+        let sec = float (lon.Substring(5,3))
+        let hem = lon.Substring(8,1)
+        let sign =
+            match hem with
+            | "W" -> -1.0
+            | "E" -> 1.0
+            | _ -> 0.0        
+        
+        (deg + (min/60.0) + (sec * 60.0)/3600.0) * sign
+
+    let convertPoitionToCoordinates (posRpt:PositionReport.PositionReport) =
+        (convertToLat posRpt.Position.Latitude) , (convertToLon posRpt.Position.Longitude)
+
 
     
     ////All received frames are displayed in the usual monitor format, preceded with the channel number inside of [ ].

@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="paket.references" />
+    <None Include="CalculatePosition.fsx" />
     <None Include="ParseFrames.fsx" />
     <Compile Include="Database.fs" />
     <Compile Include="ParticipantStatusRepository.fs" />
