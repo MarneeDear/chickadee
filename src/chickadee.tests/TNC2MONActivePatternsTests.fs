@@ -98,7 +98,7 @@ let AddressParsingTests =
 [<Tests>]
 let PositionReportParsingTests =
     testList "Position Report with message Parsing Tests" [
-        testCase "Can get message part of well formed frame with message" <| fun _ ->
+        testCase "Can get position report with message part of well formed frame" <| fun _ ->
             let result =
                 match "[0] KG7SIO-7>APRD15,WIDE1-1,TCPXX*,qAX,CWOP-2:=03216.4N/011057.3Wb,b>,lah:blah /fishcakes" with
                 | TNC2MonActivePatterns.Information i -> i
