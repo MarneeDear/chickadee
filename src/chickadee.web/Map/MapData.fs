@@ -1,6 +1,7 @@
 ﻿namespace AprsMap
 
 open chickadee.core.PositionReport
+open chickadee.infrastructure.DireWolf
 
 module MapData =
 
@@ -12,6 +13,7 @@ module MapData =
     open chickadee.infrastructure
     open Microsoft.Extensions.Logging
     open Models
+    open Config
 
     type MapData =
         {
@@ -25,7 +27,6 @@ module MapData =
         let indexAction (ctx:HttpContext) =
             let cnf = Controller.getConfig ctx
             let logger = ctx.GetLogger()
-            let test = "KG7SIO-7>APRD15,WIDE1-1:=3206.86N/11056.35Wb,b>,lah:blah /fishcakes"
             let imgPth = "/image/map/aprs-symbols/primary/"
 
             let testmapData =
@@ -47,11 +48,6 @@ module MapData =
                     }
                 ]
 
-            //TODO map a symbol to an image
-            //REname the images?
-            //Get from database and convert position report symbols to an icon
-            //TODO convert position to coordinates azure maps can understand
-
             let mapSymbolToIcon (symbol:SymbolCode) =
                 (icons |> List.find (fun s -> s.Symbol = symbol)).Icon
 
@@ -61,16 +57,16 @@ module MapData =
                     CallSign = sender
                     Image = sprintf "%s%s" imgPth (mapSymbolToIcon posRpt.Symbol)
                     Location = [lon; lat]
-                } |> Ok
+                }
 
             //GET sender part
-            let sender = 
-                match test with
+            let sender rx = 
+                match rx with
                 | TNC2MonActivePatterns.Sender s -> s
                 | _ -> System.String.Empty
 
-            let positionReport =
-                match TNC2MONRepository.convertFrameToAPRSData test with
+            let positionReport rx =
+                match TNC2MONRepository.convertFrameToAPRSData rx with
                 | Ok info -> match info with
                              | TNC2MON.Information.PositionReport rpt -> match rpt with
                                                                          | PositionReportFormat.PositionReportWithoutTimeStampOrUltimeter p -> Ok p
@@ -84,19 +80,25 @@ module MapData =
             
 
             task {
-                let mapData = 
-                    match positionReport |> Result.bind (mapToMapData sender) with
-                    | Ok data -> testmapData |> List.append [data]
+                let! rxResult = KissUtil.getReceivedFrames cnf.connectionString (Some "Position without timestamp (with APRS messaging)")
+                 
+                let mapData rx = 
+                    match positionReport rx with
+                    | Ok posRpt -> (mapToMapData (sender rx) posRpt) 
                     | Error m -> logger.LogError(m)
-                                 testmapData
-                    //[ 
-                    ////{
-                    ////    CallSign = sender
-                    ////    Image = sprintf "%s%s" imgPth "car.png"
-                    ////    Location = [-110.911789; 32.253460]
-                    ////};
-                    //]
-                return! ControllerHelpers.Controller.json ctx mapData
+                                 {
+                                    CallSign = System.String.Empty
+                                    Image = System.String.Empty
+                                    Location = []
+                                }
+
+                let result =
+                    match rxResult with
+                    | Ok rxs -> rxs |> Seq.map (fun r -> r.raw_packet) |> Seq.map mapData |> Seq.toList
+                    | Error m -> logger.LogError(m.Message)
+                                 []
+                             
+                return! ControllerHelpers.Controller.json ctx (testmapData |> List.append result)
             }
 
         let resource = controller {

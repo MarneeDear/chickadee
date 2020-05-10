@@ -66,7 +66,7 @@ function GetMap() {
     //Initialize a map instance.
 
     var map_data = GetMapData();
-    //console.log(map_data);
+    console.log(map_data);
 
     map = new atlas.Map('map', {
         center: [-110.911789, 32.253460],
@@ -102,6 +102,7 @@ function GetMap() {
 
     //Wait until the map resources are ready.
     function addMapEvent(item, index) {
+        console.log("ITEM");
         console.log(item);
         var icon = 'aprs-icon-' + String(index);
         console.log(icon);
