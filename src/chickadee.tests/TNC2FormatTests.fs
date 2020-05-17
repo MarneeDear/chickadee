@@ -69,8 +69,11 @@ let RawPacketTypeTests =
             Expect.equal ((|FormatType|_|) "\x1C blaaaa").Value CurrentMicEData "CurrentMicEData"
         testCase "Old MicE Data" <| fun _ ->
             Expect.equal ((|FormatType|_|) "\x1D blaaa").Value OldMicEData "OldMicEData"
-        testCase "Position Report Without TimeStamp Or Ultimeter" <| fun _ ->
-            Expect.equal ((|FormatType|_|) "! blahblah").Value PositionReportWithoutTimeStampOrUltimeter "PositionReportWithoutTimeStampOrUltimeter"
+        testCase "Position Report Without TimeStamp Or Ultimeter" <| fun _ ->            
+            match ((|FormatType|_|) "! blahblah").Value with
+            | PostionReport t -> Expect.equal (t.ToString()) (PositionReportWithoutTimeStampOrUltimeter.ToString()) "PositionReportWithoutTimeStampOrUltimeter"
+            | _ -> failwith "Expected a position report"
+            //Expect.equal ((|FormatType|_|) "! blahblah").Value PositionReportWithoutTimeStampOrUltimeter "PositionReportWithoutTimeStampOrUltimeter"
         testCase "Peet Bros Weather Station #" <| fun _ ->
             Expect.equal ((|FormatType|_|) "# blahblah").Value PeetBrosWeatherStation "PeetBrosWeatherStation"
         testCase "Raw GPS Data Or Ultimeter" <| fun _ ->
@@ -88,7 +91,10 @@ let RawPacketTypeTests =
         testCase "Invalid Or Test" <| fun _ ->
             Expect.equal ((|FormatType|_|) ", blahblah").Value InvalidOrTest "InvalidOrTest"
         testCase "Position Report With Timestamp No Messaging" <| fun _ ->
-            Expect.equal ((|FormatType|_|) "/ blahblah").Value PositionReportWithTimestampNoMessaging "PositionReportWithTimestampNoMessaging"
+            match ((|FormatType|_|) "/ blahblah").Value with
+            | PostionReport t -> Expect.equal (t.ToString()) (PositionReportWithTimestampNoMessaging.ToString()) "PositionReportWithTimestampNoMessaging"
+            | _ -> failwith "Expected a position report"
+            //Expect.equal ((|FormatType|_|) "/ blahblah").Value PositionReportWithTimestampNoMessaging "PositionReportWithTimestampNoMessaging"
         testCase "Message" <| fun _ ->
             Expect.equal ((|FormatType|_|) ": blahblah").Value Message "Message"
         testCase "Object" <| fun _ ->
@@ -96,13 +102,19 @@ let RawPacketTypeTests =
         testCase "Station Capabilities" <| fun _ ->
             Expect.equal ((|FormatType|_|) "< blahblah").Value StationCapabilities "StationCapabilities"
         testCase "Position Report Without TimeStamp With Messaging" <| fun _ ->
-            Expect.equal ((|FormatType|_|) "= blahblah").Value PositionReportWithoutTimeStampWithMessaging "PositionReportWithoutTimeStampWithMessaging"
+            match ((|FormatType|_|) "= blahblah").Value with
+            | PostionReport t -> Expect.equal (t.ToString()) (PositionReportWithoutTimeStampWithMessaging.ToString()) "PositionReportWithoutTimeStampWithMessaging"
+            | _ -> failwith "Expected a position report"
+            //Expect.equal ((|FormatType|_|) "= blahblah").Value PositionReportWithoutTimeStampWithMessaging "PositionReportWithoutTimeStampWithMessaging"
         testCase "Status Report" <| fun _ ->
             Expect.equal ((|FormatType|_|) "> blahblah").Value StatusReport "StatusReport"
         testCase "Query" <| fun _ ->
             Expect.equal ((|FormatType|_|) "? blahblah").Value Query "Query"
         testCase "Position Report With Timestamp With Messaging" <| fun _ ->
-            Expect.equal ((|FormatType|_|) "@ blahblah").Value PositionReportWithTimestampWithMessaging "PositionReportWithTimestampWithMessaging"
+            match ((|FormatType|_|) "@ blahblah").Value with
+            | PostionReport t -> Expect.equal (t.ToString()) (PositionReportWithTimestampWithMessaging.ToString()) "PositionReportWithTimestampWithMessaging"
+            | _ -> failwith "Expected a position report"
+            //Expect.equal ((|FormatType|_|) "@ blahblah").Value PositionReportWithTimestampWithMessaging "PositionReportWithTimestampWithMessaging"
         testCase "T is Telemetry Report" <| fun _ ->
             Expect.equal ((|FormatType|_|) "T blahblah").Value TelemetryReport "TelemetryReport"
         testCase "[ Maidenhead Grid Locator Beacon" <| fun _ ->

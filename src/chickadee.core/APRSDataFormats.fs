@@ -23,10 +23,23 @@ APRS Data Type Identifiers
 
 module APRSDataFormats =
 
+    type PositionReportDataFormat =
+        | PositionReportWithoutTimeStampOrUltimeter
+        | PositionReportWithTimestampNoMessaging
+        | PositionReportWithoutTimeStampWithMessaging
+        | PositionReportWithTimestampWithMessaging
+        override this.ToString() =
+            match this with
+            | PositionReportWithoutTimeStampOrUltimeter     -> "Position Report without timestamp or Ultimeter station"
+            | PositionReportWithTimestampNoMessaging        -> "Position with timestamp (no APRS messaging)"
+            | PositionReportWithoutTimeStampWithMessaging   -> "Position without timestamp (with APRS messaging)"
+            | PositionReportWithTimestampWithMessaging      -> "Position with timestamp (with APRS messaging)"
+
     type DataFormat =
         | CurrentMicEData
         | OldMicEData
-        | PositionReportWithoutTimeStampOrUltimeter
+        | PostionReport of PositionReportDataFormat
+        //| PositionReportWithoutTimeStampOrUltimeter
         | PeetBrosWeatherStation
         | RawGPSDataOrUltimeter
         | Argelo
@@ -34,14 +47,14 @@ module APRSDataFormats =
         | Item
         | ShelterDataWithTime
         | InvalidOrTest
-        | PositionReportWithTimestampNoMessaging
+        //| PositionReportWithTimestampNoMessaging
         | Message
         | Object
         | StationCapabilities
-        | PositionReportWithoutTimeStampWithMessaging
+        //| PositionReportWithoutTimeStampWithMessaging
         | StatusReport
         | Query
-        | PositionReportWithTimestampWithMessaging
+        //| PositionReportWithTimestampWithMessaging
         | TelemetryReport
         | MaidenheadGridLocatorBeacon
         | WeatherReportWihtoutPosition
@@ -51,9 +64,10 @@ module APRSDataFormats =
         | Unsupported
         override this.ToString() =
             match this with
-            | CurrentMicEData                               -> "Current Mic-E Data"
+            | CurrentMicEData                               -> "Current Mic-E Data" //, System.String.Empty)
             | OldMicEData                                   -> "Old Mic-E Data"
-            | PositionReportWithoutTimeStampOrUltimeter     -> "Position Report without timestamp or Ultimeter station"
+            | PostionReport t                               -> "Postion Report" //, t.ToString())
+            //| PositionReportWithoutTimeStampOrUltimeter     -> "Position Report without timestamp or Ultimeter station"
             | PeetBrosWeatherStation                        -> "Peet Bros Weather Stations"
             | RawGPSDataOrUltimeter                         -> "Raw GPS Data or Ultimeter station"
             | Argelo                                        -> "Argelo DFJr/MicroFinder"
@@ -61,14 +75,14 @@ module APRSDataFormats =
             | Item                                          -> "Item"
             | ShelterDataWithTime                           -> "[Reserved — Shelter data with time]"
             | InvalidOrTest                                 -> "Invalid or Test" 
-            | PositionReportWithTimestampNoMessaging        -> "Position with timestamp (no APRS messaging)"
+            //| PositionReportWithTimestampNoMessaging        -> "Position with timestamp (no APRS messaging)"
             | Message                                       -> "Message"
             | Object                                        -> "Object"
             | StationCapabilities                           -> "Station Capabilities"
-            | PositionReportWithoutTimeStampWithMessaging   -> "Position without timestamp (with APRS messaging)"
+            //| PositionReportWithoutTimeStampWithMessaging   -> "Position without timestamp (with APRS messaging)"
             | StatusReport                                  -> "Status Report"
             | Query                                         -> "Query"
-            | PositionReportWithTimestampWithMessaging      -> "Position with timestamp (with APRS messaging)"
+            //| PositionReportWithTimestampWithMessaging      -> "Position with timestamp (with APRS messaging)"
             | TelemetryReport                               -> "Telemetry Report"
             | MaidenheadGridLocatorBeacon                   -> "Maidenhead grid locator beacon (obsolete)"
             | WeatherReportWihtoutPosition                  -> "Weather Report (without position)"
@@ -80,7 +94,11 @@ module APRSDataFormats =
             match df with
             | CurrentMicEData                               -> "\x1C"
             | OldMicEData                                   -> "\x1D"
-            | PositionReportWithoutTimeStampOrUltimeter     -> "!"
+            | PostionReport t                               -> match t with
+                                                               | PositionReportWithoutTimeStampOrUltimeter   -> "!"
+                                                               | PositionReportWithTimestampNoMessaging      -> "/"
+                                                               | PositionReportWithoutTimeStampWithMessaging -> "="
+                                                               | PositionReportWithTimestampWithMessaging    -> "@"
             | PeetBrosWeatherStation                        -> "#"
             | RawGPSDataOrUltimeter                         -> "$"
             | Argelo                                        -> "%"
@@ -88,14 +106,14 @@ module APRSDataFormats =
             | Item                                          -> ")"
             | ShelterDataWithTime                           -> "+"
             | InvalidOrTest                                 -> "," 
-            | PositionReportWithTimestampNoMessaging        -> "/"
+            //| PositionReportWithTimestampNoMessaging        -> "/"
             | Message                                       -> ":"
             | Object                                        -> ";"
             | StationCapabilities                           -> "<"
-            | PositionReportWithoutTimeStampWithMessaging   -> "="
+            //| PositionReportWithoutTimeStampWithMessaging   -> "="
             | StatusReport                                  -> ">"
             | Query                                         -> "?"
-            | PositionReportWithTimestampWithMessaging      -> "@"
+            //| PositionReportWithTimestampWithMessaging      -> "@"
             | TelemetryReport                               -> "T"
             | MaidenheadGridLocatorBeacon                   -> "["
             | WeatherReportWihtoutPosition                  -> "_"

@@ -75,12 +75,10 @@ module MapData =
                                                                          | PositionReportFormat.PositionReportWithTimestampWithMessaging p -> Ok p
                              | _ -> Error "Not a position report"
                             //mapToMapData sender rpt
-                | Error m -> Error m
-            
-            
+                | Error m -> Error m          
 
             task {
-                let! rxResult = KissUtil.getReceivedFrames cnf.connectionString (Some "Position without timestamp (with APRS messaging)")
+                let! rxResult = KissUtil.getReceivedFrames cnf.connectionString (Some "Position Report")
                  
                 let mapData rx = 
                     match positionReport rx with

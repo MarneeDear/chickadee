@@ -50,7 +50,7 @@ let WriteFramesTests =
                 {
                     date_created = ""
                     raw_packet = "KG7SIO>APDW15,WIDE1-1:=3603.33N/11206.34W-"
-                    packet_type = "Position Report without timestamp or Ultimeter station"
+                    packet_type = "Position Report"
                     error = ""
                 }
             let result = (saveRawReceivedFrame CONN rawFrame).Result

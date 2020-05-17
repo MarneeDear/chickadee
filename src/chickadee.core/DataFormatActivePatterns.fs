@@ -9,7 +9,7 @@ module DataFormatType =
         match info.Substring(0,1) with
         | "\x1C" -> Some APRSDataFormats.DataFormat.CurrentMicEData
         | "\x1D" -> Some APRSDataFormats.DataFormat.OldMicEData
-        | "!"    -> Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampOrUltimeter
+        | "!"    -> Some (APRSDataFormats.DataFormat.PostionReport APRSDataFormats.PositionReportDataFormat.PositionReportWithoutTimeStampOrUltimeter)
         | "#"    -> Some APRSDataFormats.DataFormat.PeetBrosWeatherStation
         | "$"    -> Some APRSDataFormats.DataFormat.RawGPSDataOrUltimeter
         | "%"    -> Some APRSDataFormats.DataFormat.Argelo
@@ -18,14 +18,14 @@ module DataFormatType =
         | "*"    -> Some APRSDataFormats.DataFormat.PeetBrosWeatherStation
         | "+"    -> Some APRSDataFormats.DataFormat.ShelterDataWithTime
         | ","    -> Some APRSDataFormats.DataFormat.InvalidOrTest
-        | "/"    -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampNoMessaging
+        | "/"    -> Some (APRSDataFormats.DataFormat.PostionReport APRSDataFormats.PositionReportDataFormat.PositionReportWithTimestampNoMessaging)
         | ":"    -> Some APRSDataFormats.DataFormat.Message
         | ";"    -> Some APRSDataFormats.DataFormat.Object
         | "<"    -> Some APRSDataFormats.DataFormat.StationCapabilities
-        | "="    -> Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging
+        | "="    -> Some (APRSDataFormats.DataFormat.PostionReport APRSDataFormats.PositionReportDataFormat.PositionReportWithoutTimeStampWithMessaging)
         | ">"    -> Some APRSDataFormats.DataFormat.StatusReport
         | "?"    -> Some APRSDataFormats.DataFormat.Query
-        | "@"    -> Some APRSDataFormats.DataFormat.PositionReportWithTimestampWithMessaging
+        | "@"    -> Some (APRSDataFormats.DataFormat.PostionReport APRSDataFormats.PositionReportDataFormat.PositionReportWithTimestampWithMessaging)
         | "T"    -> Some APRSDataFormats.DataFormat.TelemetryReport
         | "["    -> Some APRSDataFormats.DataFormat.MaidenheadGridLocatorBeacon
         | "_"    -> Some APRSDataFormats.DataFormat.WeatherReportWihtoutPosition

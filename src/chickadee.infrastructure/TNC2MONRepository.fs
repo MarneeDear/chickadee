@@ -58,11 +58,18 @@ module TNC2MONRepository =
 
         let positionReport (p:PositionReport) =
             match rawType with
-            | APRSDataFormats.DataFormat.PositionReportWithoutTimeStampOrUltimeter    -> PositionReportWithoutTimeStampOrUltimeter p |> Ok
-            | APRSDataFormats.DataFormat.PositionReportWithTimestampNoMessaging       -> PositionReportWithTimestampNoMessaging p |> Ok
-            | APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging  -> PositionReportWithTimestampWithMessaging p |> Ok
-            | APRSDataFormats.DataFormat.PositionReportWithTimestampWithMessaging     -> PositionReportWithTimestampWithMessaging p |> Ok
+            | APRSDataFormats.DataFormat.PostionReport t -> match t with
+                                                            | APRSDataFormats.PositionReportDataFormat.PositionReportWithoutTimeStampOrUltimeter    -> PositionReportWithoutTimeStampOrUltimeter p |> Ok
+                                                            | APRSDataFormats.PositionReportDataFormat.PositionReportWithTimestampNoMessaging       -> PositionReportWithTimestampNoMessaging p |> Ok
+                                                            | APRSDataFormats.PositionReportDataFormat.PositionReportWithoutTimeStampWithMessaging  -> PositionReportWithTimestampWithMessaging p |> Ok
+                                                            | APRSDataFormats.PositionReportDataFormat.PositionReportWithTimestampWithMessaging     -> PositionReportWithTimestampWithMessaging p |> Ok 
             | _ -> Error "Type must be a position report."
+
+            //| APRSDataFormats.DataFormat.PositionReportWithoutTimeStampOrUltimeter    -> PositionReportWithoutTimeStampOrUltimeter p |> Ok
+            //| APRSDataFormats.DataFormat.PositionReportWithTimestampNoMessaging       -> PositionReportWithTimestampNoMessaging p |> Ok
+            //| APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging  -> PositionReportWithTimestampWithMessaging p |> Ok
+            //| APRSDataFormats.DataFormat.PositionReportWithTimestampWithMessaging     -> PositionReportWithTimestampWithMessaging p |> Ok
+            //| _ -> Error "Type must be a position report."
 
         match posResult with
         | Ok p ->   {
@@ -171,7 +178,8 @@ module TNC2MONRepository =
             //match TNC2MON.getRawPaketType(info.Substring(0, 1)) with
             match (|FormatType|_|) info with
             | Some APRSDataFormats.DataFormat.Message -> mapMessage (info.Substring 1)
-            | Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging -> mapPositionReport info APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging //We have a lat/lon position report without timestamot. Let's try to parse it.
+            //| Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging -> mapPositionReport info APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging //We have a lat/lon position report without timestamot. Let's try to parse it.
+            | Some (APRSDataFormats.DataFormat.PostionReport t) -> mapPositionReport info (APRSDataFormats.DataFormat.PostionReport t) //We have a lat/lon position report without timestamot. Let's try to parse it.
             | Some APRSDataFormats.DataFormat.UserDefined -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
                                                mapParticipantReport (info.Substring 1)
             | Some APRSDataFormats.DataFormat.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
