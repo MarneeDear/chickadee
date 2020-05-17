@@ -181,7 +181,7 @@ module KissUtil =
             | Some f -> getRecords f
             | None   -> files |> Array.map (fun f -> f.Name) |> Array.map (fun f -> getRecords f) |> Array.head
         
-    let saveReveivedRawRecords connectionString path (file: string option) =
+    let saveReceivedRawRecords connectionString path (file: string option) =
         let rcrds = 
             match file with
             | None -> getRecords path None
