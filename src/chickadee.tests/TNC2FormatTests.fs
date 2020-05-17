@@ -130,3 +130,58 @@ let RawPacketTypeTests =
         testCase "Unsupported character" <| fun _ ->
             Expect.equal ((|FormatType|_|) "N blahblah").Value Unsupported "Unsupported"
     ]
+
+[<Tests>]
+let DataIdentifierTests =
+    testList "Raw Packet Data Identifier Tests" [
+        testCase "PositionReportWithoutTimeStampOrUltimeter" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier (PostionReport PositionReportWithoutTimeStampOrUltimeter)) "!" "!" 
+        testCase "PositionReportWithTimestampNoMessaging" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier (PostionReport PositionReportWithTimestampNoMessaging)) "/" "/" 
+        testCase "PositionReportWithoutTimeStampWithMessaging" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier (PostionReport PositionReportWithoutTimeStampWithMessaging)) "=" "=" 
+        testCase "PositionReportWithTimestampWithMessaging" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier (PostionReport PositionReportWithTimestampWithMessaging)) "@" "@" 
+        testCase "CurrentMicEData" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier CurrentMicEData) "\x1C" "\x1C"
+        testCase "OldMicEData" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier OldMicEData) "\x1D" "\x1D"
+        testCase "PeetBrosWeatherStation" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier PeetBrosWeatherStation) "#" "#"
+        testCase "RawGPSDataOrUltimeter" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier RawGPSDataOrUltimeter) "$" "$"
+        testCase "Argelo" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier Argelo) "%" "%"
+        testCase "OldMicEButCurrentTMD700" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier OldMicEButCurrentTMD700) "'" "'"
+        testCase "Item" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier Item) ")" ")"
+        testCase "ShelterDataWithTime" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier ShelterDataWithTime) "+" "+"
+        testCase "InvalidOrTest" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier InvalidOrTest) "," ","
+        testCase "Message" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier Message) ":" ":"
+        testCase "Object" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier Object) ";" ";"
+        testCase "StationCapabilities" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier StationCapabilities) "<" "<"
+        testCase "Query" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier Query) "?" "?"
+        testCase "TelemetryReport" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier TelemetryReport) "T" "T"
+        testCase "MaidenheadGridLocatorBeacon" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier MaidenheadGridLocatorBeacon) "[" "["
+        testCase "WeatherReportWihtoutPosition" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier WeatherReportWihtoutPosition) "_" "_"
+        testCase "CurrentMicEDataNotUsedInTMD700" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier CurrentMicEDataNotUsedInTMD700) "`" "`"
+        testCase "UserDefined" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier UserDefined) "{" "{"
+        testCase "ThirdPartyTraffic" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier ThirdPartyTraffic) "}" "}"
+        testCase "Unsupported" <| fun _ ->
+            Expect.equal (DataFormat.dataIdentifier Unsupported) "" ""
+
+    ]
+
