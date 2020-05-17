@@ -35,6 +35,9 @@ let main argv =
     //TNC2FormatTests.RawPacketTypeTests
     //|> runTests config
 
+    //TNC2FormatTests.DataIdentifierTests
+    //|> runTests config
+
     //DireWolfTests.WriteFramesTests
     //|> runTests config
 
@@ -45,6 +48,9 @@ let main argv =
     //|> runTests config
 
     //MessageTests.MessageTests
+    //|> runTests config
+
+    //CommonTests.SymbolCodeTests
     //|> runTests config
 
     runTestsInAssembly config argv
