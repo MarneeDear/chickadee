@@ -92,13 +92,13 @@ module Controller =
             let msg : Message = {
                 Addressee = (CallSign.create model.Addressee).Value
                 MessageText = (MessageText.create model.MessageText).Value
-                MessageNumber = (MessageNumber.create model.MessageNumber).Value
+                MessageNumber = (MessageNumber.create model.MessageNumber)
             }
 
             let packet : Packet = {
-                Sender = (CallSign.create "KG7SIO").Value
+                Sender = (CallSign.create "KG7SIO").Value //TODO this should be the person using the system
                 Destination = (CallSign.create "APDW15").Value
-                Path = Path.WIDEnN WIDE11
+                Path = Path.WIDEnN WIDE11 //TODO support more paths
                 Information = Some (msg |> MessageFormat.Message |> Information.Message)
             }
             KissUtil.savePacketToDatabase cnf.connectionString packet |> ignore //TODO handle errors

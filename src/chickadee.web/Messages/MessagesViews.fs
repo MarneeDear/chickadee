@@ -111,7 +111,7 @@ module Views =
                                 div [_class "field"] [
                                     label [_class "label"] [encodedText "Message Number"]
                                     div [_class "control"] [
-                                        input [_class "input"; _name "MessageNumber"; _type "number"; _placeholder "99999"; _maxlength "5"]
+                                        input [_class "input"; _name "MessageNumber"; _type "text"; _placeholder "99999"; _maxlength "5"]
                                     ]
                                 ]
                             ]
