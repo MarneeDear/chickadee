@@ -1,24 +1,32 @@
 ﻿namespace PositionReports
 
 module Model =
-    type PositionReportReceived =
+    type PositionReport =
         {
             ReportType : string
             Latitude : string
             Longitude : string
-            Symbol : string
+            SymbolImage : string
             TimeStamp : string
             Comment : string
+            
+        }
+    type PositionReportReceived =
+        {
+            DateCreated : string
+            RawPacket : string
+            RawPosition : string
             DateReceived : string
+            PositionReport : PositionReport
+            Error : string
         }
 
     type PositionReportTransmitted = 
         {
-            ReportType : string
-            Latitude : string
-            Longitude : string
-            Symbol : string
-            TimeStamp : string
-            Comment : string
-            DateReceived : string
+            DateCreated : string
+            RawPacket : string
+            RawPosition : string
+            PositionReport : PositionReport
+            Error : string
+            Transmitted : bool
         }

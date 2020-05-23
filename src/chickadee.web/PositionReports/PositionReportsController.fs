@@ -8,7 +8,7 @@ module Controller =
 
     let indexAction (ctx: HttpContext) = 
         task {
-            return Views.index
+            return Views.index Seq.empty Seq.empty
         }
 
     let resource = controller {
