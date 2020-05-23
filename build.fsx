@@ -9,10 +9,17 @@ open Fake.Core.TargetOperators
 
 Target.initEnvironment ()
 
+//C:\Users\marnee\Dropbox\github\radio\aprs-projects\chickadee\publishRPi\publishCli
+
 let servicePath = "./src/chickadee.service/" |> Fake.IO.Path.getFullName
 let webPath = "./src/chickadee.web/" |> Fake.IO.Path.getFullName
 let testPath = "./src/chickadee.tests/" |> Fake.IO.Path.getFullName
 let migrationPath = "./src/chickadee.migrations/" |> Fake.IO.Path.getFullName
+let cliPath = "./src/chickadee.cli/" |> Fake.IO.Path.getFullName
+let cliPublishTo = "./publishRPi/publishCli" |> Fake.IO.Path.getFullName
+let webPublishTo = "./publishRPi/publishWeb" |> Fake.IO.Path.getFullName
+let servicePublishTo = "./publishRPi/publishService" |> Fake.IO.Path.getFullName
+let migratePublishTo = "./publishRPi/publishMigration" |> Fake.IO.Path.getFullName
 
 let runDotNet cmd workingDir =
     let result =
@@ -64,6 +71,9 @@ Target.create "RunService" (fun _ ->
     runDotNet "watch run" servicePath |> ignore
 )
 
+//Target.create "RunCLI" (fun _ ->
+//    runDotNet "run" cliPath |> ignore
+//)
 
 open Fake.IO.Globbing.Operators
 open System.Net
@@ -78,6 +88,15 @@ Target.create "MigrateUp" (fun _ ->
     runDotNet "run" migrationPath |> ignore
 )
 
+//Publish ALL to RPi
+//dotnet publish -r linux-arm --self-contained -o ../../publish src/chickadee.cli
+Target.create "PublishRPi" (fun _ ->
+    //TODO compile to release, not debug first
+    runDotNet (sprintf "publish -r linux-arm --self-contained -o %s" cliPublishTo) cliPath
+    runDotNet (sprintf "publish -r linux-arm --self-contained -o %s" webPublishTo) webPath
+    runDotNet (sprintf "publish -r linux-arm --self-contained -o %s" servicePublishTo) servicePath
+    runDotNet (sprintf "publish -r linux-arm --self-contained -o %s" migratePublishTo) migrationPath
+)
 
 Target.create "All" ignore
 
@@ -93,5 +112,14 @@ Target.create "All" ignore
 "Clean"
     ==> "Build"
     ==> "RunService"
+
+//"Clean"
+//    ==> "Build"
+//    ==> "RunCLI"
+
+"Clean"
+    ==> "Build"
+    ==> "Test"
+    ==> "PublishRPi"
 
 Target.runOrDefault "All"
