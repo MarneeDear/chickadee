@@ -46,7 +46,7 @@ module Message =
     module MessageNumber =
         let create (n:string) =
             match (n.Trim()) with
-            | n when n.Length <= 5 -> Some (MessageNumber n)
+            | n when n.Length <= 5 -> Some (MessageNumber (n.PadLeft(5, '0')))
             | _ -> None //MessageNumber (n.Substring(0, 5)) //Or fail with None?
         let value (MessageNumber n) = n.PadLeft(5, '0')
 
@@ -62,11 +62,13 @@ module Message =
         {
             Addressee       : CallSign
             MessageText     : MessageText
-            MessageNumber   : MessageNumber
+            MessageNumber   : MessageNumber option
         }
         override this.ToString() =
-            sprintf ":%-9s:%s{%s" (CallSign.value this.Addressee) (MessageText.value this.MessageText) (MessageNumber.value this.MessageNumber)
-
+            match this.MessageNumber with
+            | Some n -> sprintf ":%-9s:%s{%s" (CallSign.value this.Addressee) (MessageText.value this.MessageText) (MessageNumber.value n)
+            | None -> sprintf ":%-9s:%s" (CallSign.value this.Addressee) (MessageText.value this.MessageText)
+    
     (*
     Message Acknowledgement
     A message acknowledgement is similar to a message, except that the message

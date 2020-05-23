@@ -35,13 +35,15 @@ and SourcePathArguments =
     | [<AltCommandLine("--rpt")>]               PositionReport  of rpt:ParseResults<PositionReportArguments>
     | [<AltCommandLine("--msg")>]               CustomMessage   of msg:ParseResults<CustomMessageArguments>
     | [<AltCommandLine("--save-to")>]           SaveFilePath    of save:string
+    | [<AltCommandLine("--parse-frame")>]       ParseFrame      of frame:string
 with
     interface IArgParserTemplate with
         member s.Usage =
             match s with
-            | Sender _          -> "Your Call Sign"
+            | Sender _          -> "Your Call Sign. This is required for all commands."
             | Destination _     -> "To whom is this intended? This could also be a an application from the To Calls list http://aprs.org/aprs11/tocalls.txt"
             | Path _            -> "Only option is WIDE1-1" 
             | PositionReport _  -> "Position Reports require a Latitude and Longitude. See Position Report usage for more." //TODO
             | CustomMessage _   -> "Unformatted message. Anything you want but cuts off at 63 chars. in length" //TODO
             | SaveFilePath _    -> "Send output to a file in this location to be used by Dire Wolf's kissutil"
+            | ParseFrame _      -> "Provide a raw frame and I'll check it out to see what it means"

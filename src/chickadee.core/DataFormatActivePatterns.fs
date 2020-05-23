@@ -44,6 +44,7 @@ module MessageActivePatterns =
     bytes   | 1 |    9      | 1 |    0-67       |     {      |      1-5
     KG7SIO   :HELLO WORLD{12345
     0123456789012345678901234567890
+    Message ID and Message Number are optional
     *)
     let (|Addressee|_|) (msg:string) =
         match msg.IndexOf(":") = 9 with
@@ -51,14 +52,34 @@ module MessageActivePatterns =
         | false -> None
 
     let (|Message|_|) (msg:string) = 
-        match msg.IndexOf(":"), msg.IndexOf("{") with
-        | i, j when i = 9 && j > 9 && j <= i + 68    -> MessageText.create (msg.Substring(i + 1, j - i - 1))
-        | _                                         -> None
+        //let a = msg.IndexOf("ack")
+        match msg.IndexOf(":"), msg.IndexOf("{"), msg.IndexOf("ack"), msg.IndexOf("rej") with        
+        | i, j, a, r when i = 9 && j = -1 && a <> 10 && r <> 10 -> MessageText.create (msg.Substring(10)) //No Message ID        
+        | i, j, a, r when i = 9 && j > 9 && j <= 78 && a <> 10 && r <> 10 -> MessageText.create (msg.Substring(10, j - 1 - i)) //With Message ID
+        | _                                       -> None
 
     let (|MessageNumber|_|) (msg:string) =
         match msg.IndexOf(":"), msg.IndexOf("{") with
         | i, j when i = 9 && j > 9 && j <= i + 68 -> MessageNumber.create (msg.Substring(j+1).Trim())
-        | _, _                                   -> None
+        | i, j when i = 9 && j = -1 -> None //MessageNumber.create String.Empty
+        | _, _                      -> None
+
+    //KB2ICI-14:ack003
+    //0123456789123456789
+    let (|MessageAcknowledgementNumber|_|) (msg:string) =
+        match msg.IndexOf(":") with
+        | i when i = 9 -> match msg.Substring(i + 1).IndexOf("ack") with
+                          | 0 -> MessageNumber.create (msg.Substring(14))
+                          | _ -> None
+        | _ -> None
+
+    //KB2ICI-14:rej003
+    let (|MessageRejectionNumber|_|) (msg:string) =
+        match msg.IndexOf(":") with
+        | i when i = 9 -> match msg.Substring(i + 1).IndexOf("rej") with
+                          | 0 -> MessageNumber.create (msg.Substring(14))
+                          | _ -> None
+        | _ -> None
 
 module PositionReportActivePatterns =
 

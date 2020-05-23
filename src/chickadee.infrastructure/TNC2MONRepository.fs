@@ -83,14 +83,14 @@ module TNC2MONRepository =
 
     let mapMessage (msg:string) = //Can I do this recursivley
         match (|Addressee|_|) msg, (|Message|_|) msg, (|MessageNumber|_|) msg with
-        | Some a, Some m, Some n -> {
+        | Some a, Some m, n -> {
                                         Addressee = a
                                         MessageText = m
                                         MessageNumber = n
                                      } |> MessageFormat.Message |> TNC2MON.Information.Message |> Ok
-        | None, Some _, Some _ -> Error "Addressee part of message not in expected format."
-        | Some _, None, Some _ -> Error "Message part of message not in expected format."
-        | Some _, Some _, None -> Error "Message Number part of message not in expected format."
+        | None, Some _, _ -> Error "Addressee part of message not in expected format."
+        | Some _, None, _ -> Error "Message part of message not in expected format."
+        //| Some _, Some _, None -> Error "Message Number part of message not in expected format."
         | _, _, _              -> Error "Message not in expected format."
 
     let mapUnsupportedMessage (msg:string) =
@@ -175,14 +175,12 @@ module TNC2MONRepository =
             | None      -> "No information part found." |> Error
 
         let data (info:string) =
-            //match TNC2MON.getRawPaketType(info.Substring(0, 1)) with
             match (|FormatType|_|) info with
             | Some APRSDataFormats.DataFormat.Message -> mapMessage (info.Substring 1)
-            //| Some APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging -> mapPositionReport info APRSDataFormats.DataFormat.PositionReportWithoutTimeStampWithMessaging //We have a lat/lon position report without timestamot. Let's try to parse it.
             | Some (APRSDataFormats.DataFormat.PostionReport t) -> mapPositionReport info (APRSDataFormats.DataFormat.PostionReport t) //We have a lat/lon position report without timestamot. Let's try to parse it.
-            | Some APRSDataFormats.DataFormat.UserDefined -> //Ok (mapParticipantReport (msg.Substring(1))) //We have user-defined data. Maybe it's a participant report. Let's try to parse it
-                                               mapParticipantReport (info.Substring 1)
-            | Some APRSDataFormats.DataFormat.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
+            | Some APRSDataFormats.DataFormat.UserDefined -> //TODO use the particpant report type format
+                                                             mapParticipantReport (info.Substring 1)
+            //| Some APRSDataFormats.DataFormat.Unsupported -> mapUnsupportedMessage(info.Substring 1) |> Ok //if not in supported format just turn it into a message so it can be logged
             | _ -> mapUnsupportedMessage(info.Substring 1) |> Ok
 
         frame

@@ -8,6 +8,9 @@
   <ItemGroup>
     <None Include="paket.references" />
     <Compile Include="CommandArguments.fs" />
+    <Compile Include="FrameParser.fs" />
+    <Compile Include="MessageComposer.fs" />
+    <Compile Include="PositionReportComposer.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

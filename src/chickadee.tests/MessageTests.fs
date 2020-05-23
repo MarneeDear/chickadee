@@ -16,7 +16,7 @@ let MessageTests =
             let msg = {
                 Addressee = (CallSign.create CALLSIGN).Value
                 MessageText = (MessageText.create MESSAGE).Value
-                MessageNumber = (MessageNumber.create MSGNUM).Value
+                MessageNumber = (MessageNumber.create MSGNUM)
             }
             Expect.equal (msg.ToString()) (sprintf ":KG7SIO   :TESTING MESSAGING{%s" MSGNUM) "Message not in expected format"
         testCase "Can create Message Acknowledgement" <| fun _ ->
