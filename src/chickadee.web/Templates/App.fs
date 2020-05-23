@@ -25,11 +25,11 @@ let layout (content: XmlNode list) =
                         span [] []
                     ]
                 ]
-                div [_class "navbar-menu"; _id "navMenu"] [
-                    div [_class "navbar-start"] [
-                        a [_class "navbar-item"; _href "https://github.com/MarneeDear/chickadee/blob/master/README.md"] [rawText "Getting started"]
-                    ]
-                ]
+                //div [_class "navbar-menu"; _id "navMenu"] [
+                //    div [_class "navbar-start"] [
+                //        a [_class "navbar-item"; _href "https://github.com/MarneeDear/chickadee/blob/master/README.md"] [rawText "Getting started"]
+                //    ]
+                //]
             ]
             yield! content
             yield footer [_class "footer is-fixed-bottom"] [
