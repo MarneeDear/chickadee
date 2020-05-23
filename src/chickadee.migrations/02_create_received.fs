@@ -10,7 +10,8 @@ type CreateReceived() =
     	date_created	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     	raw_packet	TEXT NOT NULL,
     	packet_type	TEXT NOT NULL,
-    	error	TEXT
+    	error	TEXT,
+        PRIMARY KEY(date_created)
     );")
 
   override __.Down() =

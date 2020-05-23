@@ -10,7 +10,8 @@ type CreateTransmitted() =
 	    date_created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     	raw_packet	TEXT NOT NULL,
     	packet_type	TEXT NOT NULL,
-    	transmitted	INTEGER NOT NULL DEFAULT 0    
+    	transmitted	INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY(date_created)
     );")
 
   override __.Down() =

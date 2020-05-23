@@ -196,6 +196,7 @@ module KissUtil =
             }
         let doSave frame =
             task {
+                System.Threading.Thread.Sleep(1000) //Need to wait so the records have a new created date which is the primary key
                 return! (saveRawReceivedFrame connectionString frame)
             }           
         let saveFrame rcrd = 
