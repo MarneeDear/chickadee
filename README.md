@@ -85,25 +85,28 @@ dotnet run --project src/chickadee.cli/ -- --help
 You should see the help output looking like this:
 
 ```cmd
-USAGE: faprs [--help] --sender <sender> --destination <destination> [--path <path>] [--custommessage <msg>] [--savefilepath <save>] [<subcommand> [<options>]]
+USAGE: chick [--help] --sender <sender> [--destination <destination>] [--path <path>] [--savefilepath <save>] [--parseframe <frame>]
+             [<subcommand> [<options>]]
 
 SUBCOMMANDS:
 
     --positionreport, --rpt <rpt>
                           Position Reports require a Latitude and Longitude. See Position Report usage for more.
+    --custommessage, --msg <msg>
+                          Unformatted message. Anything you want but cuts off at 63 chars. in length
 
-    Use 'faprs <subcommand> --help' for additional information.
+    Use 'chick <subcommand> --help' for additional information.
 
 OPTIONS:
 
-    --sender, -s <sender> Your Call Sign
+    --sender, -s <sender> Your Call Sign. This is required for all commands.
     --destination, -d <destination>
                           To whom is this intended? This could also be a an application from the To Calls list http://aprs.org/aprs11/tocalls.txt
-    --path <path>         Only option is WIDE1-1
-    --custommessage, --msg <msg>
-                          Unformatted message. Anything you want but cuts off at 63 chars. in length
+    --path, -p <path>     Only option is WIDE1-1
     --savefilepath, --save-to <save>
                           Send output to a file in this location to be used by Dire Wolf's kissutil
+    --parseframe, --parse-frame <frame>
+                          Provide a raw frame and I'll check it out to see what it means
     --help                display this list of options.
 ```
 
@@ -116,29 +119,29 @@ dotnet run --project src/chickadee.cli/ -- --rpt --help
 You should see some helpful stuff like this.
 
 ```cmd
-USAGE: faprs --positionreport [--help] latitude <latitude> <hemisphere> longitude <longitude> <hemisphere> [symbol <symbol>] [comment <comment>]
+USAGE: chick --positionreport [--help] latitude <latitude> longitude <longitude> [symbol <symbol>] [comment <comment>]
 
 OPTIONS:
 
-    latitude <latitude> <hemisphere>
-                          Your current latitude in this format 36.106964 N
-    longitude <longitude> <hemisphere>
-                          Your current longitude in this format 112.112999 E
-    symbol <symbol>       Optional. Default is House (-). If you want to use House, do not use the symbol argument because dashes do not parse.
-    comment <comment>     Optional. What do you want to say? <comment> must be 43 characters or fewer.
+    latitude, --lat <latitude>
+                          Your current latitude in decimal coordinates (simple standard) format
+    longitude, --lon <longitude>
+                          Your current longitude in decimal coordinates (simple standard) format
+    symbol, -s <symbol>   Optional. Default is House (-). If you want to use House, do not use the symbol argument because dashes do not parse.
+    comment, -c <comment> Optional. What do you want to say? <comment> must be 43 characters or fewer.
     --help                display this list of options.
 ```
 
 #### Create a TNC2MON formatted frame with position report
 
 ```cmd
-dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --rpt latitude 36.106964 longitude -112.112999 symbol b comment "Join Oro Valley Amateur Radio Club"
+dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --rpt latitude 36.106964 longitude -112.112999 symbol b comment "You can't stop the signal."
 ```
 
 This will create a TNC2MON formatted frame with a lat/lon position report that looks like this:
 
 ```text
-KG7SIO>APDW15:WIDE1-1:=36.106964N/112.112999WbJoin Oro Valley Amateur Radio Club.
+KG7SIO>APDW15:WIDE1-1:=36.106964N/112.112999WbYou can't stop the signal.
 ```
 
 The CLI will save it to the folder (and path) specified in `--save-to`. In this case the XMIT folder (if you have one) in your `present working directory.`
@@ -151,19 +154,33 @@ Let's break this down:
   * `APDW15`
 * Your position is `36.106964 degrees N` and `112.112999 degrees W`
 * Your APRS symbol is `b` for `bicycle`
-* Your comment is `Join Oro Valley Amateur Radio Club`
+* Your comment is `You can't stop the signal.`
 
 #### Create a TNC2MON formatted frame with unformatted message (string)
 
 ```bash
-dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --msg "Join Oro Valley Amateur Radio Club"
-
+dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO-7 --destination APDW15 --path WIDE1-1 --msg -a "KG7SIO" -m "Join Oro Valley Amateur Radio Club"
 ```
 
-This will create a TNC2MON formatted frame with a custom message that looks like this:
+This will create a TNC2MON formatted frame with a custom message. The output should look like this:
 
-```text
-KG7SIO>APDW15,WIDE1-1:Join Oro Valley Amateur Radio Club
+```cmd
+This is what you want me to do [SaveFilePath "XMIT"; Sender "KG7SIO-7"; Destination "APDW15"; Path "WIDE1-1";
+ CustomMessage [Addressee "KG7SIO"; Message "The spice must flow."]]
+Successfully parsed your packet. Here is what I got.
+APRS PACKET: KG7SIO-7>APDW15,WIDE1-1::KG7SIO   :The spice must flow.{00000
+SENDER : CallSign "KG7SIO-7"
+DESTINATION : CallSign "APDW15"
+INFORMATION : ":KG7SIO   :The spice must flow.{00000"
+ADDRESSEE: CallSign "KG7SIO"
+MESSAGE: MessageText "The spice must flow."
+NUMBER: Some MessageNumber "00000"
+```
+
+The APRS packet:
+
+```cmd
+APRS PACKET: KG7SIO-7>APDW15,WIDE1-1::KG7SIO   :The spice must flow.{00000
 ```
 
 The CLI will save it to the folder (and path) specified in `--save-to`. In this case the XMIT folder (if you have one) in your `present working directory.`
@@ -283,16 +300,4 @@ Run `direwolf` with the PPM calibration value. The flag is `-p`
 
 ```bash
 rtl_fm -p 63 -f 144.39M - | direwolf -d n -c sdr.conf -r 24000 -D 1 - 
-```
-
-## Run the web project
-
-`chickadee.service` provides a background service that will process records received by DireWolf and save them to the database available to the web UI.
-
-You can run it with `fake`.
-
-### Run with re-loading after changes.
-
-```bash
-dotnet fake build target RunService
 ```
