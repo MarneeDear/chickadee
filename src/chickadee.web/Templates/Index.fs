@@ -1,4 +1,4 @@
-module Index
+module OldIndex
 
 open Giraffe.GiraffeViewEngine
 

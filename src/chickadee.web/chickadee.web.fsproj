@@ -244,6 +244,8 @@
     <Compile Include="PositionReports\PositionReportsModels.fs" />
     <Compile Include="PositionReports\PositionReportsViews.fs" />
     <Compile Include="PositionReports\PositionReportsController.fs" />
+    <Compile Include="Index\IndexView.fs" />
+    <Compile Include="Index\IndexController.fs" />
     <Compile Include="Router.fs" />
     <Compile Include="Program.fs" />
     <None Include="paket.references" />
