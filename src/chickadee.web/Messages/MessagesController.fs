@@ -78,13 +78,20 @@ module Controller =
         let logger = ctx.GetLogger()
 
         task {
-            return Views.add ctx
+            return Views.add ctx None
         }
 
     let createAction (ctx:HttpContext) =
         let cnf = Controller.getConfig ctx
         let logger = ctx.GetLogger()
+        
         task {
+            let! json = Helpers.getUserSettings() 
+            //let settings =
+            //    match json with
+            //    | Ok s -> s
+            //    | Error m -> logger.LogError m
+            //                 Helpers.emptyUserSettings()
             let! model = Controller.getModel<Model.Message> ctx
             //TODO add to database and allow background job to handle writing to DireWolf
             //Build the packets
@@ -94,15 +101,26 @@ module Controller =
                 MessageText = (MessageText.create model.MessageText).Value
                 MessageNumber = (MessageNumber.create model.MessageNumber)
             }
-
-            let packet : Packet = {
-                Sender = (CallSign.create "KG7SIO").Value //TODO this should be the person using the system
-                Destination = (CallSign.create "APDW15").Value
-                Path = Path.WIDEnN WIDE11 //TODO support more paths
-                Information = Some (msg |> MessageFormat.Message |> Information.Message)
-            }
-            KissUtil.savePacketToDatabase cnf.connectionString packet |> ignore //TODO handle errors
-            return! Controller.redirect ctx "/messages"
+            match json with
+            | Ok s -> {
+                            Sender = (CallSign.create s.CallSign).Value //TODO this should be the person using the system
+                            Destination = (CallSign.create "APDW15").Value
+                            Path = Path.WIDEnN WIDE11 //TODO support more paths
+                            Information = Some (msg |> MessageFormat.Message |> Information.Message)
+                      }
+                      |> KissUtil.savePacketToDatabase cnf.connectionString  
+                      |> ignore //TODO handle errors
+                      return! Controller.redirect ctx "/messages"
+            | Error m -> logger.LogError m                         
+                         return! Controller.renderHtml ctx (Views.add ctx (Some ([m] |> List.append ["Please go back to Setup and enter your user settings"])))
+            //let packet : Packet = {
+            //    Sender = (CallSign.create "KG7SIO").Value //TODO this should be the person using the system
+            //    Destination = (CallSign.create "APDW15").Value
+            //    Path = Path.WIDEnN WIDE11 //TODO support more paths
+            //    Information = Some (msg |> MessageFormat.Message |> Information.Message)
+            //}
+            //KissUtil.savePacketToDatabase cnf.connectionString packet |> ignore //TODO handle errors
+            //return! Controller.redirect ctx "/messages"
         }
 
     let resource = controller {

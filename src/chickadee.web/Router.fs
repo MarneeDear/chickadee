@@ -58,6 +58,9 @@ let browserRouter = router {
 
     //All received messages
     forward "/all" All.Controller.resource
+
+    //User Settings
+    forward "/settings" Settings.Controller.resource
 }
 
 //Other scopes may use different pipelines and error handlers

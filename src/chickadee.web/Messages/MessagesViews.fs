@@ -78,7 +78,7 @@ module Views =
         ]
         App.layout content
 
-    let add (ctx:HttpContext) =
+    let add (ctx:HttpContext) (errors:string list option) =
         let content = [
             section [_class "section"] [
                 nav [_class "breadcrumb"] [
@@ -92,6 +92,12 @@ module Views =
                     ]
                 ]
                 h1 [_class "title"] [encodedText "Create Messages"]
+                div [_class ""] [                    
+                    if errors.IsSome then
+                        for error in errors.Value do
+                            encodedText error 
+                            br[]                  
+                ]
                 Helpers.protectedForm ctx [ _method "post"; _action "/messages"; _name "message"; _id "message"; ] [
                     div [_class "columns"] [                    
                         div [_class "column"] [
@@ -99,13 +105,13 @@ module Views =
                                 div [_class "field"] [
                                     label [_class "label"] [encodedText "Addressee"]
                                     div [_class "control"] [
-                                        input [_class "input"; _name "Addressee"; _type "text"; _placeholder "Call Sign (KG7SIO)"; _maxlength "9"] 
+                                        input [_class "input"; _name "Addressee"; _type "text"; _placeholder "Call Sign (KG7SIO)"; _maxlength "9"; _required] 
                                     ]
                                 ]
                                 div [_class "field"] [
                                     label [_class "label"] [encodedText "Message Text"]
                                     div [_class "control"] [
-                                        input [_class "input"; _name "MessageText"; _type "text"; _placeholder "What do you want to say?"; _maxlength "67"]
+                                        input [_class "input"; _name "MessageText"; _type "text"; _placeholder "What do you want to say?"; _maxlength "67"; _required]
                                     ]
                                 ]
                                 div [_class "field"] [
