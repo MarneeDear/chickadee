@@ -185,6 +185,40 @@ APRS PACKET: KG7SIO-7>APDW15,WIDE1-1::KG7SIO   :The spice must flow.{00000
 
 The CLI will save it to the folder (and path) specified in `--save-to`. In this case the XMIT folder (if you have one) in your `present working directory.`
 
+#### Parse a given packet
+
+Do you have a packet and want to know what is means? You can use the CLI to parse the data formats that are currently supported. You can also use the CLI to find out the type of data format of the data formats that are not fully supported at this time.
+
+##### Data formats current supported
+
+* Messages
+  * Message
+  * Message Acknowledgements
+  * Message Rejections
+* Position Reports
+
+##### How to parse a packet
+
+```cmd
+dotnet run --project src/chickadee.cli/ -- --save-to XMIT --sender KG7SIO-7 --parseframe "KG7SIO-7>APDW15,WIDE1-1::KG7SIO   :The spice must flow.{00000"
+```
+
+You should see output like this:
+
+```cmd
+This is what you want me to do [SaveFilePath "XMIT"; Sender "KG7SIO-7";
+ ParseFrame "KG7SIO-7>APDW15,WIDE1-1::KG7SIO   :The spice must flow.{00000"]
+Successfully parsed your packet. Here is what I got.
+APRS PACKET: KG7SIO-7>APDW15,WIDE1-1::KG7SIO   :The spice must flow.{00000
+SENDER : CallSign "KG7SIO-7"
+DESTINATION : CallSign "APDW15"
+INFORMATION : ":KG7SIO   :The spice must flow.{00000"
+ADDRESSEE: CallSign "KG7SIO"
+MESSAGE: MessageText "The spice must flow."
+NUMBER: Some MessageNumber "00000"
+```
+
+
 ## Developers and contributors
 
 Contributors welcome. Please follow the [F# Style Guide](https://docs.microsoft.com/en-us/dotnet/fsharp/style-guide/) and [open source contributors guide.](https://opensource.guide/how-to-contribute/)
