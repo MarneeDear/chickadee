@@ -14,14 +14,7 @@
     <Compile Include="Templates\Map.fs" />
     <None Include="static\map.js" />
     <Content Include="static\antenna.png" />
-    <Content Include="static\aprs-symbols-24-0.png" />
-    <Content Include="static\aprs-symbols-24-1.png" />
-    <Content Include="static\aprs-symbols-24-2.png" />
-    <Content Include="static\aprs-symbols.css" />
     <None Include="static\image\map\ICONS.md" />
-    <Content Include="static\image\map\aprs-symbols-24-0.png" />
-    <Content Include="static\image\map\aprs-symbols-24-1.png" />
-    <Content Include="static\image\map\aprs-symbols-24-2.png" />
     <Content Include="static\image\map\aprs-symbols\aprs_small\cut_images_iizWqQM4U68AyA\image_part_001.png" />
     <Content Include="static\image\map\aprs-symbols\aprs_small\cut_images_iizWqQM4U68AyA\image_part_002.png" />
     <Content Include="static\image\map\aprs-symbols\aprs_small\cut_images_iizWqQM4U68AyA\image_part_003.png" />
