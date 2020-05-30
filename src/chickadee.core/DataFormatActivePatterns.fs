@@ -81,15 +81,37 @@ module MessageActivePatterns =
                           | _ -> None
         | _ -> None
 
+//Example: =3603.55N/112006.56W-
+//Example: !4903.50N/07201.75W-Test 001234
+//Example: /092345z4903.50N/07201.75W>Test1234
+//Example: @092345/4903.50N/07201.75W>Test1234
+         //0123456789012345678901234567890123456789
 module PositionReportActivePatterns =
+
+    let hasTimeStamp (info:string) =
+        match info.Substring(0,1) with
+        | i when i = "=" || i = "!" -> false
+        | i when i = "/" || i = "@" -> true
+        | _ -> false
+
+    let (|TimeStamp|_|) (info:string) =        
+        match hasTimeStamp info with
+        | false -> None
+        | true -> let ts = info.Substring(1, 7)
+                  match ts.EndsWith("z") || ts.EndsWith("/") with
+                  | true -> Some (Timestamp.TimeStamp.rxed ts)
+                  | false -> None
 
     //Only supports Lat/Long Position Report Format — without Timestamp
     //See APRS 1.01 spec, section 8 POSITION AND DF REPORT DATA FORMATS
     //TODO make the data type identifies types
-    //TODO According to APRS spec the Longitude is 8 chars fixed-length. Can just use the length to parse?
-    //Example: =3603.55N/112006.56W-
-    let (|Latitude|_|) (msg:string) = 
-        let lat = msg.Substring(1, 8)
+    //TODO According to APRS spec the Longitude is 8 chars fixed-length. Can just use the length to parse?    
+    let (|Latitude|_|) (info:string) = 
+        let lat = 
+            match hasTimeStamp info with
+            | true ->  info.Substring(8, 8)
+            | false -> info.Substring(1, 8)
+        //let lat = info.Substring(1, 8)
         match lat.EndsWith("N"), lat.EndsWith("S") with
         | true, false   -> Some lat
         | false, true   -> Some lat
@@ -99,30 +121,37 @@ module PositionReportActivePatterns =
     //See APRS 1.01 spec, section 8 POSITION AND DF REPORT DATA FORMATS
     //TODO According to APRS spec the Longitude is 9 chars fixed-length. Can just use the length to parse.
     //Example: =3603.55N/112006.56W-
-    let (|Longitude|_|) (msg:string) =
-        let parseLongitude (posRpt:string) =
-            let lon = posRpt.Substring(10, 9) 
-            match lon.EndsWith("W"), lon.EndsWith("E") with 
-            | true, false   -> Some lon
-            | false, true   -> Some lon
-            | _             -> None
+    let (|Longitude|_|) (info:string) =
+        //let parseLongitude (posRpt:string) =
+        let lon = 
+            match hasTimeStamp info with
+            | false -> info.Substring(10, 9) 
+            | true -> info.Substring(17, 9) 
+        match lon.EndsWith("W"), lon.EndsWith("E") with 
+        | true, false   -> Some lon
+        | false, true   -> Some lon
+        | _             -> None
             
-        match msg.Substring(9,1) with
-        | "/"   -> parseLongitude msg
-        | _     -> None
+        //match info.Substring(9,1) with
+        //| "/"   -> parseLongitude info
+        //| _     -> None
 
     //TODO can do this by string position because the lat/lon is a fixed length
     //Should be char 20
     //Example: =3603.55N/112006.56W-
-    let (|Symbol|_|) (msg:string) =
+    let (|Symbol|_|) (info:string) =
         //TODO check that the previous char was a W or E meaning that it was probably and APRS lat/lon
-        match msg.Substring(18,1) with
-        | "W" -> SymbolCode.fromSymbol (msg.Substring(19,1).ToCharArray().[0]) 
-        | "E" -> SymbolCode.fromSymbol (msg.Substring(19,1).ToCharArray().[0])
-        | _ -> None
+        //let sym =
+        match hasTimeStamp info with
+        | true -> SymbolCode.fromSymbol (info.Substring(26,1).ToCharArray().[0])
+        | false -> SymbolCode.fromSymbol (info.Substring(19,1).ToCharArray().[0])
+        //match sym with
+        //| "W" -> SymbolCode.fromSymbol (sym.ToCharArray().[0]) 
+        //| "E" -> SymbolCode.fromSymbol (sym.ToCharArray().[0])
+        //| _ -> None
 
-    let (|Comment|_|) (symbol:char) (msg:string) =
-        let comment = msg.Substring(msg.IndexOf(symbol) + 1).Trim()
+    let (|Comment|_|) (symbol:char) (info:string) = //TODO by index?
+        let comment = info.Substring(info.IndexOf(symbol) + 1).Trim()
         match String.IsNullOrEmpty(comment) with
         | true -> None
         | false -> Some comment

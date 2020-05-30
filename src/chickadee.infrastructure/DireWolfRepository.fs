@@ -89,6 +89,8 @@ module KissUtil =
                                                         | PositionReportFormat.PositionReportWithoutTimeStampWithMessaging p -> APRSDataFormats.PositionReportWithoutTimeStampWithMessaging.ToString()
                                                         | PositionReportFormat.PositionReportWithTimestampNoMessaging p -> APRSDataFormats.PositionReportWithTimestampNoMessaging.ToString()
                                                         | PositionReportFormat.PositionReportWithTimestampWithMessaging p -> APRSDataFormats.PositionReportWithTimestampWithMessaging.ToString()
+                        | TNC2MON.ParticipantStatusReport psrt -> APRSDataFormats.UserDefined.ToString()
+                        | TNC2MON.Unsupported u -> APRSDataFormats.Unsupported.ToString()
             | None -> String.Empty
         
         let frame =

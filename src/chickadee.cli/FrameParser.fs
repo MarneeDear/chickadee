@@ -1,6 +1,5 @@
 ﻿module FrameParser
 
-open System
 open chickadee.core.TNC2MON
 open chickadee.core
 open chickadee.core.TNC2MonActivePatterns
@@ -140,6 +139,10 @@ let parseFrame (frame:string) : Result<Packet, string list> =
         | _, _, _ -> errorsList |> List.append ["Could not parse message format. This is not a message, an acknowledgement, or a rejection."] |> Error
 
     let parsePositionReport (info:string) =
+        //let ts =
+        //    match info with
+        //    | 
+
         let lat =
             match info with
             | Latitude l -> Ok (FormattedLatitude.check l)
@@ -187,7 +190,7 @@ let parseFrame (frame:string) : Result<Packet, string list> =
                             | Some r -> match r with
                                         | DataFormat.PostionReport p -> parsePositionReport i //(i.Substring(1))
                                         | DataFormat.Message -> parseMessageFormat (i.Substring(1))
-                                        | _ -> Error ([sprintf "Could not parse frame but got this format [%s]" (r.ToString())])
+                                        | _ -> Error ([sprintf "Packet data format not supported. Got this format [%s]" (r.ToString())])
                             | None -> Error (["Did not recognize data format type"])
         | _ -> Error (errorsList |> List.append ["Could not parse Information"])
 

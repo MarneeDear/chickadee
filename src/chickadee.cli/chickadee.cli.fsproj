@@ -7,7 +7,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="paket.references" />
+    <Compile Include="Console.fs" />
     <Compile Include="CommandArguments.fs" />
+    <Compile Include="PrintOutput.fs" />
     <Compile Include="FrameParser.fs" />
     <Compile Include="MessageComposer.fs" />
     <Compile Include="PositionReportComposer.fs" />

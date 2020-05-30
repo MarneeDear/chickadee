@@ -36,10 +36,15 @@ let txFrame : RawTransmittedFrame =
 
 let saveTx () =
     (saveTransmitFrame CONN txFrame).Result |> ignore
+    Threading.Thread.Sleep(1000)
     (saveTransmitFrame CONN txFrame).Result |> ignore
+    Threading.Thread.Sleep(1000)
     (saveTransmitFrame CONN txFrame).Result |> ignore
+    Threading.Thread.Sleep(1000)
     (saveTransmitFrame CONN txFrame).Result |> ignore
+    Threading.Thread.Sleep(1000)
     (saveTransmitFrame CONN txFrame).Result |> ignore
+    Threading.Thread.Sleep(1000)
     (saveTransmitFrame CONN txFrame).Result |> ignore
 
 [<Tests>]
@@ -56,6 +61,7 @@ let WriteFramesTests =
             let result = (saveRawReceivedFrame CONN rawFrame).Result
             Expect.isOk result "Recevied frame was not saved"
         testCase "Can save frame to be transmitted" <| fun _ ->
+            Threading.Thread.Sleep(1000)
             let result = (saveTransmitFrame CONN txFrame).Result
             Expect.isOk result "Tx frame was not saved."
         testCase "Can set frames to transmitted2" <| fun _ ->

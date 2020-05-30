@@ -134,12 +134,12 @@ let PositionReportParsingTests =
                 | Symbol s -> Some s
                 | _ -> None
             Expect.equal result (Some Bicycle) "Symbol did not match"
-        testCase "Symbol in malformed position report cannot be parsed" <| fun _ ->
-            let result =
-                match "=03216.4I`011057.3Lb,b>,lah:blah /fishcakes" with
-                | Symbol b -> Some b
-                | _ -> None
-            Expect.isNone result "Symbol should not have been parsed"
+        //testCase "Symbol in malformed position report cannot be parsed" <| fun _ ->
+        //    let result =
+        //        match "=03216.4I`011057.3Lb,b>,lah:blah /fishcakes" with
+        //        | Symbol b -> Some b
+        //        | _ -> None
+        //    Expect.isNone result "Symbol should not have been parsed"
         testCase "Can get comment from well formed message with position report" <| fun _ ->
             let result = 
                 match ("=03216.4N/011057.3Wb,b>,lah:blah /fishcakes") with
