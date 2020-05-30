@@ -18,6 +18,7 @@
     <Content Include="static\aprs-symbols-24-1.png" />
     <Content Include="static\aprs-symbols-24-2.png" />
     <Content Include="static\aprs-symbols.css" />
+    <None Include="static\image\map\ICONS.md" />
     <Content Include="static\image\map\aprs-symbols-24-0.png" />
     <Content Include="static\image\map\aprs-symbols-24-1.png" />
     <Content Include="static\image\map\aprs-symbols-24-2.png" />
