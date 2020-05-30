@@ -12,6 +12,14 @@ A system for sending APRS messages built in F#, because functional programming a
 
 A work in progress.
 
+## Acknowledgments
+
+### APRS symbol icons
+
+The APRS symbol icons used in the Map in the web UI are derived from the [aprs.fi symbol set](http://github.com/hessu/aprs-symbols/) provided by [hessu](https://github.com/hessu). 
+
+Thank you!
+
 ## Prior Art
 
 Here is a similar system using a Kantronics packet radio setup that functions like a BBS with keyboard-to-keyboard communications.
